@@ -39,8 +39,6 @@ public class UniversalLinksPlugin extends CordovaPlugin {
     @Override
     public void onStart() {
         super.onStart();
-
-        handleLaunchIntent();
     }
 
     @Override
@@ -57,17 +55,19 @@ public class UniversalLinksPlugin extends CordovaPlugin {
 
     private void setDefaultCallback(CallbackContext callback) {
         this.defaultCallback = callback;
+
+        handleLaunchIntent();
     }
 
     private void sendEventToJs(ULDomain domain, Uri correspondingUri) {
-//        if (defaultCallback == null) {
-//            return;
-//        }
+        if (defaultCallback == null) {
+            return;
+        }
 
         PluginResult result = new PluginResult(PluginResult.Status.OK, new JSMessage(domain, correspondingUri));
         result.setKeepCallback(true);
 
-        //defaultCallback.sendPluginResult(result);
+        defaultCallback.sendPluginResult(result);
     }
 
     private void handleLaunchIntent() {
