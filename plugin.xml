@@ -18,9 +18,9 @@
 <!-- adb shell am start -W -a android.intent.action.VIEW -d "http://extended.example.com/another/path/my/page?param=1#has" com.example.ul -->
 
 <!-- JavaScrip Library Sources -->
-<!-- <js-module src="www/chcp.js" name="chcp">
-      <clobbers target="chcp" />
-    </js-module> -->
+  <js-module src="www/universal_links.js" name="universalLinks">
+    <clobbers target="universalLinks" />
+  </js-module>
 
 <!-- Hooks -->
 <!-- <hook type="after_prepare" src="scripts/afterPrepareHook.js" />
@@ -38,7 +38,7 @@
 <!-- Java Library Sources -->
 <!-- sources for package: com.nordnetab.cordova.ul.js -->
     <source-file src="src/android/com/nordnetab/cordova/ul/js/JSAction.java"
-      target-dir="src/android/src/com/nordnetab/cordova/ul/js/"/>
+      target-dir="src/com/nordnetab/cordova/ul/js/"/>
 
 <!-- sources for package: com.nordnetab.cordova.ul.model -->
     <source-file src="src/android/com/nordnetab/cordova/ul/model/JSMessage.java"
