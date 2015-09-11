@@ -1,21 +1,20 @@
-
 var exec = require('cordova/exec'),
-  channel = require('cordova/channel');
+  channel = require('cordova/channel'),
 
-// Reference name for the plugin
-PLUGIN_NAME = 'UniversalLinks',
+  // Reference name for the plugin
+  PLUGIN_NAME = 'UniversalLinks',
 
   // Plugin methods on the native side that can be called from JavaScript
   pluginNativeMethod = {
     INITIALIZE: 'jsInitPlugin'
-  },
+  };
 
-  // Called when Cordova is ready for work.
-  // Here we will send default callback to the native side through which it will send to us different events.
-  channel.onCordovaReady.subscribe(function() {
-    ensureCustomEventExists();
-    exec(nativeCallback, null, PLUGIN_NAME, pluginNativeMethod.INITIALIZE, []);
-  });
+// Called when Cordova is ready for work.
+// Here we will send default callback to the native side through which it will send to us different events.
+channel.onCordovaReady.subscribe(function() {
+  ensureCustomEventExists();
+  exec(nativeCallback, null, PLUGIN_NAME, pluginNativeMethod.INITIALIZE, []);
+});
 
 /**
  * Method is called when native side sends us different events.
@@ -27,7 +26,7 @@ function nativeCallback(msg) {
   var ulEvent = new CustomEvent(msg.event, {
     'detail': msg.data
   });
-  
+
   document.dispatchEvent(ulEvent);
 }
 
