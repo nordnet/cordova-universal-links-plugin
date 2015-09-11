@@ -13,12 +13,7 @@
       manifestData = xml.readXmlAsJson(pathToManifest);
 
     cleanManifestData = removeOldOptions(manifestData);
-
-    console.log('Clean manifest:' + JSON.stringify(cleanManifestData, null, 2));
-
     injectOptions(cleanManifestData, pluginPreferences);
-
-    console.log('New manifest: ' + JSON.stringify(cleanManifestData, null, 2));
 
     xml.writeJsonAsXml(cleanManifestData, pathToManifest);
   }
