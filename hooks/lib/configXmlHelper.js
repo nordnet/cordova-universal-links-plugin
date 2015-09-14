@@ -1,4 +1,10 @@
-(function (){
+/*
+Helper class to read/write config.xml file from/to different sources:
+  - project root;
+  - android-specific config.xml;
+  - ios-specific config.xml.
+*/
+(function() {
   var path = require('path'),
     XmlHelper = require('./xmlHelper.js'),
     ANDROID = 'android',
@@ -12,42 +18,68 @@
 
   // region public API
 
+  /**
+   * Constructor.
+   *
+   * @param {Object} cordovaContext - cordova context object
+   */
   function ConfigXmlHelper(cordovaContext) {
     context = cordovaContext;
     projectRoot = context.opts.projectRoot;
     xml = new XmlHelper();
   }
 
-  ConfigXmlHelper.prototype.read = function (platform) {
+  /**
+   * Read config.xml data as JSON object.
+   *
+   * @param {String} platform - if defined - read platform-specific config.xml; if not - read it from the project root;
+   * @return {Object} JSON object with data from config.xml
+   */
+  ConfigXmlHelper.prototype.read = function(platform) {
     var filePath = getConfigXmlFilePath(platform);
 
     return xml.readXmlAsJson(filePath);
   }
 
-  ConfigXmlHelper.prototype.write = function (data, platform) {
+  /**
+   * Write JSON object into config.xml file.
+   *
+   * @param {Object} data - JSON object to write to file;
+   * @param {String} platform - if defined - save to the platform-specific config.xml; if not - write to the project root;
+   * @return {boolean} true - if data was successfully saved to the file; otherwise - false.
+   */
+  ConfigXmlHelper.prototype.write = function(data, platform) {
     var filePath = getConfigXmlFilePath(platform);
 
-    xml.writeJsonAsXml(data, filePath);
+    return xml.writeJsonAsXml(data, filePath);
   }
 
   // endregion
 
   // region Private API
 
+  /**
+   * Get absolute path to the config.xml. Depends on the provided platform flag.
+   *
+   * @param {String} platform - for which platform we need config.xml file; if not defined - file is taken from the project root.
+   */
   function getConfigXmlFilePath(platform) {
     var configXmlPath = null;
-    switch(platform) {
-      case IOS: {
-        configXmlPath = pathToIosConfigXml();
-        break;
-      }
-      case ANDROID: {
-        configXmlPath = pathToAndroidConfigXml();
-        break;
-      }
-      default: {
-        configXmlPath = pathToProjectConfigXml();
-      }
+    switch (platform) {
+      case IOS:
+        {
+          configXmlPath = pathToIosConfigXml();
+          break;
+        }
+      case ANDROID:
+        {
+          configXmlPath = pathToAndroidConfigXml();
+          break;
+        }
+      default:
+        {
+          configXmlPath = pathToProjectConfigXml();
+        }
     }
 
     return configXmlPath;
@@ -89,8 +121,15 @@
     return path.join(projectRoot, 'platforms', ANDROID, 'res', 'xml', CONFIG_FILE_NAME);
   }
 
+  /**
+   * Get path to config.xml inside project root directory.
+   *
+   * @return {String} absolute path to config.xml file
+   */
   function pathToProjectConfigXml() {
     return path.join(projectRoot, CONFIG_FILE_NAME);
   }
+
+  // endregion
 
 })();
