@@ -3,7 +3,8 @@
   var path = require('path'),
     fs = require('fs'),
     xml2js = require('xml2js'),
-    ConfigXmlHelper = require('./configXmlHelper.js');
+    ConfigXmlHelper = require('./configXmlHelper.js'),
+    DEFAULT_SCHEME = 'http';
 
   module.exports = {
     readPreferences: readPreferences
@@ -22,47 +23,49 @@
       return null;
     }
 
-    var xmlDomainList = ulXmlPreferences[0]['domain'];
-    if (xmlDomainList == null || xmlDomainList.length == 0) {
-      console.warn('No domain is specified in the config.xml. Universal Links plugin is not going to work.');
+    var xmlHostList = ulXmlPreferences[0]['host'];
+    if (xmlHostList == null || xmlHostList.length == 0) {
+      console.warn('No host is specified in the config.xml. Universal Links plugin is not going to work.');
       return null;
     }
 
-    return constructPreferencesObject(xmlDomainList);
+    return constructPreferencesObject(xmlHostList);
   }
 
   function constructPreferencesObject(xmlPreferences) {
     var ulObject = [];
 
     xmlPreferences.forEach(function(element) {
-      var domain = {
-        scheme: 'http',
+      var host = {
+        scheme: DEFAULT_SCHEME,
         name: '',
         paths: []
       };
-      var domainProperties = element['$'];
-      if (domainProperties == null || domainProperties.length == 0) {
+      var hostProperties = element['$'];
+      if (hostProperties == null || hostProperties.length == 0) {
         return;
       }
 
-      domain.name = domainProperties.name;
-      if (domainProperties['scheme'] != null) {
-        domain.scheme = domainProperties.scheme;
+      host.name = hostProperties.name;
+      if (hostProperties['scheme'] != null) {
+        host.scheme = hostProperties.scheme;
       }
 
       if (element['path'] != null) {
         element.path.some(function (pathElement) {
           var url = pathElement['$']['url'];
           if (url === '*') {
-            domain.paths = [];
+            host.paths = ['*'];
             return true;
           }
 
-          domain.paths.push(pathElement['$']['url']);
+          host.paths.push(pathElement['$']['url']);
         });
+      } else {
+        host.paths = ['*'];
       }
 
-      ulObject.push(domain);
+      ulObject.push(host);
     });
 
     return ulObject;
