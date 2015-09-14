@@ -77,14 +77,9 @@
       launchActivity = manifestData['manifest']['application']['0']['activity'][launchActivityIndex],
       ulIntentFilters = [];
 
-    pluginPreferences.forEach(function(domain) {
-      if (domain.paths.length == 0) {
-        ulIntentFilters.push(createIntentFilter(domain.name, domain.scheme));
-        return;
-      }
-
-      domain.paths.forEach(function(dPath) {
-        ulIntentFilters.push(createIntentFilter(domain.name, domain.scheme, dPath));
+    pluginPreferences.forEach(function(host) {
+      host.paths.forEach(function(hostPath) {
+        ulIntentFilters.push(createIntentFilter(host.name, host.scheme, hostPath));
       });
     });
 
