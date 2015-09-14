@@ -11,20 +11,36 @@
   <issue></issue>
 
   <engines>
-    <engine name="cordova-ios" version=">=3.8" />
-    <engine name="cordova-android" version=">=4" />
+    <engine name="cordova-ios" version=">=3.8"></engine>
+    <engine name="cordova-android" version=">=4"></engine>
   </engines>
 
 <!-- adb shell am start -W -a android.intent.action.VIEW -d "http://extended.example.com/another/path/my/page?param=1#has" com.example.ul -->
 
 <!-- JavaScrip Library Sources -->
-  <js-module src="www/universal_links.js" name="universalLinks">
-    <clobbers target="universalLinks" />
+  <js-module name="universalLinks" src="www/universal_links.js">
+    <clobbers target="universalLinks"/>
   </js-module>
 
 <!-- Hooks -->
-  <hook type="after_prepare" src="hooks/afterPrepareHook.js" />
-  <hook type="after_plugin_add" src="hooks/afterPluginAddHook.js" />
+  <hook src="hooks/afterPrepareHook.js" type="after_prepare"/>
+  <hook src="hooks/afterPluginAddHook.js" type="after_plugin_add"/>
+
+  <platform name="ios">
+<!-- Plugin inclusion in Cordova config.xml  -->
+    <config-file parent="/*" target="config.xml">
+      <feature name="UniversalLinks">
+        <param name="ios-package" value="CULPlugin"/>
+        <param name="onload" value="true"/>
+      </feature>
+    </config-file>
+
+<!-- Objective-C Sources -->
+
+    <source-file src="src/ios/CULPlugin.m"/>
+    <header-file src="src/ios/CULPlugin.h"/>
+
+  </platform>
 
   <platform name="android">
 <!-- Plugin inclusion in Cordova config.xml -->
@@ -37,26 +53,19 @@
 
 <!-- Java Library Sources -->
 <!-- sources for package: com.nordnetab.cordova.ul.js -->
-    <source-file src="src/android/com/nordnetab/cordova/ul/js/JSAction.java"
-      target-dir="src/com/nordnetab/cordova/ul/js/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/js/JSAction.java" target-dir="src/com/nordnetab/cordova/ul/js/"/>
 
 <!-- sources for package: com.nordnetab.cordova.ul.model -->
-    <source-file src="src/android/com/nordnetab/cordova/ul/model/JSMessage.java"
-      target-dir="src/com/nordnetab/cordova/ul/model/"/>
-    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULDomain.java"
-      target-dir="src/com/nordnetab/cordova/ul/model/"/>
-    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULPath.java"
-      target-dir="src/com/nordnetab/cordova/ul/model/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/model/JSMessage.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULDomain.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULPath.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
 
 <!-- sources for package: com.nordnetab.cordova.ul.parser -->
-    <source-file src="src/android/com/nordnetab/cordova/ul/parser/ULConfigXmlParser.java"
-      target-dir="src/com/nordnetab/cordova/ul/parser/"/>
-    <source-file src="src/android/com/nordnetab/cordova/ul/parser/XmlTags.java"
-      target-dir="src/com/nordnetab/cordova/ul/parser/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/parser/ULConfigXmlParser.java" target-dir="src/com/nordnetab/cordova/ul/parser/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/parser/XmlTags.java" target-dir="src/com/nordnetab/cordova/ul/parser/"/>
 
 <!-- sources for package: com.nordnetab.cordova.ul -->
-    <source-file src="src/android/com/nordnetab/cordova/ul/UniversalLinksPlugin.java"
-      target-dir="src/com/nordnetab/cordova/ul/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/UniversalLinksPlugin.java" target-dir="src/com/nordnetab/cordova/ul/"/>
 
   </platform>
 </plugin>
