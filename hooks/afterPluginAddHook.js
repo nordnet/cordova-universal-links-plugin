@@ -1,8 +1,6 @@
 /**
 Hook is executed when plugin is added to the project.
 It will check all necessary module dependencies and install the missing ones locally.
-Also, it will suggest to user to install CLI client for that plugin.
-It can be found in https://github.com/nordnet/cordova-hot-code-push-cli.git
 */
 
 var exec = require('child_process').exec,
@@ -49,8 +47,7 @@ function installNodeModule(moduleName, callback) {
 }
 
 /**
- * Install all required node packages. For now we have to do it manually.
- * Once we make plugin as a node package - we can specify dependencies in package.json.
+ * Install all required node packages.
  */
 function installRequiredNodeModules() {
   if (modules.length == 0) {
