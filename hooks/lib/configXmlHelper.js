@@ -1,6 +1,9 @@
 (function (){
   var path = require('path'),
     XmlHelper = require('./xmlHelper.js'),
+    ANDROID = 'android',
+    IOS = 'ios',
+    CONFIG_FILE_NAME = 'config.xml',
     xml,
     context,
     projectRoot;
@@ -34,11 +37,11 @@
   function getConfigXmlFilePath(platform) {
     var configXmlPath = null;
     switch(platform) {
-      case 'ios': {
+      case IOS: {
         configXmlPath = pathToIosConfigXml();
         break;
       }
-      case 'android': {
+      case ANDROID: {
         configXmlPath = pathToAndroidConfigXml();
         break;
       }
@@ -59,10 +62,9 @@
    * @return {String} name of the project
    */
   function getProjectName(ctx, projectRoot) {
-    var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
-      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
-      xml = cordova_util.projectConfig(projectRoot),
-      cfg = new ConfigParser(xml);
+    var ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
+      pathToProjectConfig = pathToProjectConfigXml(),
+      cfg = new ConfigParser(pathToProjectConfig);
 
     return cfg.name();
   }
@@ -75,7 +77,7 @@
   function pathToIosConfigXml() {
     var projectName = getProjectName(cordovaContext, projectRoot);
 
-    return path.join(projectRoot, 'platforms', 'ios', projectName, 'config.xml');
+    return path.join(projectRoot, 'platforms', IOS, projectName, CONFIG_FILE_NAME);
   }
 
   /**
@@ -84,11 +86,11 @@
    * @return {String} absolute path to config.xml file
    */
   function pathToAndroidConfigXml() {
-    return path.join(projectRoot, 'platforms', 'android', 'res', 'xml', 'config.xml');
+    return path.join(projectRoot, 'platforms', ANDROID, 'res', 'xml', CONFIG_FILE_NAME);
   }
 
   function pathToProjectConfigXml() {
-    return path.join(projectRoot, 'config.xml');
+    return path.join(projectRoot, CONFIG_FILE_NAME);
   }
 
 })();

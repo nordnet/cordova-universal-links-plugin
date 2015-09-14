@@ -1,22 +1,25 @@
 var ulConfigParser = require('./lib/ulConfigXmlParser.js'),
-  ulAndroidManifestWriter = require('./lib/ulAndroidManifestWriter.js');
+  ulAndroidManifestWriter = require('./lib/ulAndroidManifestWriter.js'),
+  ulAndroidWebHook = require('./lib/ulAndroidWebHook.js'),
+  ANDROID = 'android',
+  IOS = 'ios';
 
 module.exports = function(ctx) {
   run(ctx);
 };
 
 function run(cordovaContext) {
-  var pluginPreferences = ulConfigParser.readPreferences(cordovaContext);
-  //console.log('Preferences: ' + JSON.stringify(pluginPreferences, null, 2));
+  var pluginPreferences = ulConfigParser.readPreferences(cordovaContext),
+    platformsList = cordovaContext.opts.platforms;
 
-  cordovaContext.opts.platforms.forEach(function(platform) {
+  platformsList.forEach(function(platform) {
     switch (platform) {
-      case 'android': {
+      case ANDROID: {
         activateUniversalLinksInAndroid(cordovaContext, pluginPreferences);
         break;
       }
-      case 'ios': {
-        activateUniversalLinksInIos(pluginPreferences);
+      case IOS: {
+        activateUniversalLinksInIos(cordovaContext, pluginPreferences);
         break;
       }
     }
@@ -25,8 +28,9 @@ function run(cordovaContext) {
 
 function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
   ulAndroidManifestWriter.writePreferences(cordovaContext, pluginPreferences);
+  ulAndroidWebHook.generate(cordovaContext, pluginPreferences);
 }
 
-function activateUniversalLinksInIos(pluginPreferences) {
+function activateUniversalLinksInIos(cordovaContext, pluginPreferences) {
 
 }

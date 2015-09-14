@@ -9,12 +9,13 @@
   }
 
   XmlHelper.prototype.readXmlAsJson = function(filePath) {
-    var xmlData = null;
-    var parsedData = null;
+    var xmlData,
+      xmlParser,
+      parsedData;
 
     try {
       xmlData = fs.readFileSync(filePath);
-      var xmlParser = new xml2js.Parser();
+      xmlParser = new xml2js.Parser();
       xmlParser.parseString(xmlData, function(err, data) {
         if (data) {
           parsedData = data;
@@ -28,8 +29,9 @@
   }
 
   XmlHelper.prototype.writeJsonAsXml = function(jsData, filePath) {
-    var xmlBuilder = new xml2js.Builder();
-    var changedXmlData = xmlBuilder.buildObject(jsData);
+    var xmlBuilder = new xml2js.Builder(),
+      changedXmlData = xmlBuilder.buildObject(jsData);
+      
     fs.writeFileSync(filePath, changedXmlData);
   }
 
