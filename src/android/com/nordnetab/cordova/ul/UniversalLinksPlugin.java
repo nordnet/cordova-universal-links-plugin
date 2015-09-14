@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.nordnetab.cordova.ul.js.JSAction;
 import com.nordnetab.cordova.ul.model.JSMessage;
-import com.nordnetab.cordova.ul.model.ULDomain;
+import com.nordnetab.cordova.ul.model.ULHost;
 import com.nordnetab.cordova.ul.parser.ULConfigXmlParser;
 
 import org.apache.cordova.CallbackContext;
@@ -24,16 +24,14 @@ import java.util.List;
  */
 public class UniversalLinksPlugin extends CordovaPlugin {
 
-    private List<ULDomain> supportedDomains;
+    private List<ULHost> supportedHosts;
     private CallbackContext defaultCallback;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
 
-        supportedDomains = new ULConfigXmlParser(cordova.getActivity()).parse();
-
-        Log.d("CUL", "total count: " + supportedDomains.size());
+        supportedHosts = new ULConfigXmlParser(cordova.getActivity()).parse();
     }
 
     @Override
@@ -59,19 +57,19 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         handleLaunchIntent();
     }
 
-    private void sendEventToJs(ULDomain domain, Uri correspondingUri) {
+    private void sendEventToJs(ULHost host, Uri correspondingUri) {
         if (defaultCallback == null) {
             return;
         }
 
-        PluginResult result = new PluginResult(PluginResult.Status.OK, new JSMessage(domain, correspondingUri));
+        PluginResult result = new PluginResult(PluginResult.Status.OK, new JSMessage(host, correspondingUri));
         result.setKeepCallback(true);
 
         defaultCallback.sendPluginResult(result);
     }
 
     private void handleLaunchIntent() {
-        if (supportedDomains == null || supportedDomains.size() == 0) {
+        if (supportedHosts == null || supportedHosts.size() == 0) {
             return;
         }
 
@@ -90,24 +88,24 @@ public class UniversalLinksPlugin extends CordovaPlugin {
     }
 
     private void processURL(Uri launchUri) {
-        ULDomain domain = findDomainByUrl(launchUri);
-        if (domain == null) {
-            Log.d("CUL", "Domain " + launchUri.getHost() + " is not supported");
+        ULHost host = findHostByUrl(launchUri);
+        if (host == null) {
+            Log.d("CUL", "Host " + launchUri.getHost() + " is not supported");
             return;
         }
 
-        sendEventToJs(domain, launchUri);
+        sendEventToJs(host, launchUri);
     }
 
-    private ULDomain findDomainByUrl(Uri url) {
-        ULDomain domain = null;
-        for (ULDomain supportedDomain : supportedDomains) {
-            if (supportedDomain.getName().equals(url.getHost())) {
-                domain = supportedDomain;
+    private ULHost findHostByUrl(Uri url) {
+        ULHost host = null;
+        for (ULHost supportedHost : supportedHosts) {
+            if (supportedHost.getName().equals(url.getHost())) {
+                host = supportedHost;
                 break;
             }
         }
 
-        return domain;
+        return host;
     }
 }

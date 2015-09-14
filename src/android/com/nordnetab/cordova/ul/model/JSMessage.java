@@ -21,19 +21,19 @@ public class JSMessage extends JSONObject {
     private static final class JSDataKeys {
         public static final String PATH = "path";
         public static final String SCHEME = "scheme";
-        public static final String DOMAIN = "domain";
+        public static final String HOST = "host";
         public static final String HASH = "hash";
         public static final String PARAMS = "params";
         public static final String ORIGIN = "url";
     }
 
-    public JSMessage(ULDomain domain, Uri originalUri) {
-        setEventName(domain, originalUri);
-        setMessageData(domain, originalUri);
+    public JSMessage(ULHost host, Uri originalUri) {
+        setEventName(host, originalUri);
+        setMessageData(host, originalUri);
     }
 
-    private void setEventName(ULDomain domain, Uri originalUri) {
-        final String event = getEventName(domain, originalUri);
+    private void setEventName(ULHost host, Uri originalUri) {
+        final String event = getEventName(host, originalUri);
 
         try {
             put(JSGeneralKeys.EVENT, event);
@@ -42,36 +42,36 @@ public class JSMessage extends JSONObject {
         }
     }
 
-    private String getEventName(ULDomain domain, Uri originalUri) {
+    private String getEventName(ULHost host, Uri originalUri) {
         String event = null;
         final String originPath = originalUri.getPath();
-        final List<ULPath> domainPathsList = domain.getPaths();
-        for (ULPath domainPath : domainPathsList) {
-            final String domainPathUrl = domainPath.getUrl();
-            if (domainPathUrl == null) {
+        final List<ULPath> hostPathsList = host.getPaths();
+        for (ULPath hostPath : hostPathsList) {
+            final String hostPathUrl = hostPath.getUrl();
+            if (hostPathUrl == null) {
                 continue;
             }
 
-            if (originPath.matches(domainPathUrl)) {
-                event = domainPath.getEvent();
+            if (originPath.matches(hostPathUrl)) {
+                event = hostPath.getEvent();
                 break;
             }
         }
 
         // set domain event name if none is specified in the paths
         if (event == null) {
-            event = domain.getEvent();
+            event = host.getEvent();
         }
 
         return event;
     }
 
-    private void setMessageData(ULDomain domain, Uri originalUri) {
+    private void setMessageData(ULHost domain, Uri originalUri) {
         final JSONObject dataObject = new JSONObject();
 
         try {
             setOriginalUrl(dataObject, originalUri);
-            setDomainData(dataObject, domain);
+            setHostData(dataObject, domain);
             setPathData(dataObject, originalUri);
 
             put(JSGeneralKeys.DATA, dataObject);
@@ -84,9 +84,9 @@ public class JSMessage extends JSONObject {
         dataObject.put(JSDataKeys.ORIGIN, originalUri.toString());
     }
 
-    private void setDomainData(JSONObject dataObject, ULDomain domain) throws JSONException {
-        dataObject.put(JSDataKeys.DOMAIN, domain.getName());
-        dataObject.put(JSDataKeys.SCHEME, domain.getScheme());
+    private void setHostData(JSONObject dataObject, ULHost host) throws JSONException {
+        dataObject.put(JSDataKeys.HOST, host.getName());
+        dataObject.put(JSDataKeys.SCHEME, host.getScheme());
     }
 
     private void setPathData(JSONObject dataObject, Uri originalUri) throws JSONException {

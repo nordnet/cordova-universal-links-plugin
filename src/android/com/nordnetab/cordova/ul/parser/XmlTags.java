@@ -7,10 +7,10 @@ final class XmlTags {
 
     public static final String MAIN_TAG = "universal-links";
 
-    public static final String DOMAIN_TAG = "domain";
-    public static final String DOMAIN_SCHEME_ATTRIBUTE = "scheme";
-    public static final String DOMAIN_NAME_ATTRIBUTE = "name";
-    public static final String DOMAIN_EVENT_ATTRIBUTE = "event";
+    public static final String HOST_TAG = "host";
+    public static final String HOST_SCHEME_ATTRIBUTE = "scheme";
+    public static final String HOST_NAME_ATTRIBUTE = "name";
+    public static final String HOST_EVENT_ATTRIBUTE = "event";
 
     public static final String PATH_TAG = "path";
     public static final String PATH_URL_TAG = "url";

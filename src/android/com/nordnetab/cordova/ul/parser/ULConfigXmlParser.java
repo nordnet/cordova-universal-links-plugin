@@ -2,7 +2,7 @@ package com.nordnetab.cordova.ul.parser;
 
 import android.content.Context;
 
-import com.nordnetab.cordova.ul.model.ULDomain;
+import com.nordnetab.cordova.ul.model.ULHost;
 import com.nordnetab.cordova.ul.model.ULPath;
 
 import org.apache.cordova.ConfigXmlParser;
@@ -17,30 +17,30 @@ import java.util.List;
 public class ULConfigXmlParser  extends ConfigXmlParser {
 
     private final Context context;
-    private List<ULDomain> domainsList;
+    private List<ULHost> hostsList;
 
     private boolean isInsideMainTag;
     private boolean didParseMainBlock;
-    private boolean isInsideDomainBlock;
-    private ULDomain processedDomain;
+    private boolean isInsideHostBlock;
+    private ULHost processedHost;
 
     public ULConfigXmlParser(Context context) {
         this.context = context;
     }
 
-    public List<ULDomain> parse() {
+    public List<ULHost> parse() {
         resetValuesToDefaultState();
         super.parse(context);
 
-        return domainsList;
+        return hostsList;
     }
 
     private void resetValuesToDefaultState() {
-        domainsList = new ArrayList<ULDomain>();
+        hostsList = new ArrayList<ULHost>();
         isInsideMainTag = false;
         didParseMainBlock = false;
-        isInsideDomainBlock = false;
-        processedDomain = null;
+        isInsideHostBlock = false;
+        processedHost = null;
     }
 
     @Override
@@ -59,13 +59,13 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
             return;
         }
 
-        if (!isInsideDomainBlock && XmlTags.DOMAIN_TAG.equals(name)) {
-            isInsideDomainBlock = true;
-            processDomainBlock(xml);
+        if (!isInsideHostBlock && XmlTags.HOST_TAG.equals(name)) {
+            isInsideHostBlock = true;
+            processHostBlock(xml);
             return;
         }
 
-        if (isInsideDomainBlock && XmlTags.PATH_TAG.equals(name)) {
+        if (isInsideHostBlock && XmlTags.PATH_TAG.equals(name)) {
             processPathBlock(xml);
         }
     }
@@ -78,10 +78,10 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
 
         final String name = xml.getName();
 
-        if (isInsideDomainBlock && XmlTags.DOMAIN_TAG.equals(name)) {
-            isInsideDomainBlock = false;
-            domainsList.add(processedDomain);
-            processedDomain = null;
+        if (isInsideHostBlock && XmlTags.HOST_TAG.equals(name)) {
+            isInsideHostBlock = false;
+            hostsList.add(processedHost);
+            processedHost = null;
             return;
         }
 
@@ -91,12 +91,12 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
         }
     }
 
-    private void processDomainBlock(XmlPullParser xml) {
-        final String domainName = xml.getAttributeValue(null, XmlTags.DOMAIN_NAME_ATTRIBUTE);
-        final String eventName = xml.getAttributeValue(null, XmlTags.DOMAIN_EVENT_ATTRIBUTE);
-        final String scheme = xml.getAttributeValue(null, XmlTags.DOMAIN_SCHEME_ATTRIBUTE);
+    private void processHostBlock(XmlPullParser xml) {
+        final String hostName = xml.getAttributeValue(null, XmlTags.HOST_NAME_ATTRIBUTE);
+        final String eventName = xml.getAttributeValue(null, XmlTags.HOST_EVENT_ATTRIBUTE);
+        final String scheme = xml.getAttributeValue(null, XmlTags.HOST_SCHEME_ATTRIBUTE);
 
-        processedDomain = new ULDomain(domainName, scheme, eventName);
+        processedHost = new ULHost(hostName, scheme, eventName);
     }
 
     private void processPathBlock(XmlPullParser xml) {
@@ -108,10 +108,10 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
 
         String event = xml.getAttributeValue(null, XmlTags.PATH_EVENT_TAG);
         if (event == null) {
-            event = processedDomain.getEvent();
+            event = processedHost.getEvent();
         }
 
         ULPath path = new ULPath(url, event);
-        processedDomain.getPaths().add(path);
+        processedHost.getPaths().add(path);
     }
 }
