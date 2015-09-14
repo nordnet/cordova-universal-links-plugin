@@ -49,7 +49,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
     var cleanManifest = manifestData,
       activities = manifestData['manifest']['application'][0]['activity'];
 
-    activities.forEach(removeIntentFiltersFromActivity(activity));
+    activities.forEach(removeIntentFiltersFromActivity);
     cleanManifest['manifest']['application'][0]['activity'] = activities;
 
     return cleanManifest;
@@ -295,7 +295,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
     if (pathName == null || pathName === '*') {
       return;
     }
-    
+
     var attrKey = 'android:path';
     if (pathName.indexOf('*') >= 0) {
       attrKey = 'android:pathPattern';
