@@ -28,8 +28,8 @@ static NSString *const DEFAULT_SCHEME = @"http";
 - (instancetype)initWithHostName:(NSString *)name scheme:(NSString *)scheme event:(NSString *)event {
     self = [super init];
     if (self) {
-        _event = event;
-        _scheme = scheme;
+        _event = event ? event : DEFAULT_EVENT;
+        _scheme = scheme ? scheme : DEFAULT_SCHEME;
         _name = name;
         _paths = [[NSMutableArray alloc] init];
     }
