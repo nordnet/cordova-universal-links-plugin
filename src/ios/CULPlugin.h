@@ -9,4 +9,6 @@
 
 @interface CULPlugin : CDVPlugin
 
+- (void)jsInitPlugin:(CDVInvokedUrlCommand *)command;
+
 @end
