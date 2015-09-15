@@ -50,6 +50,10 @@
     <source-file src="src/ios/Model/CULPath.m" target-dir="Model/"/>
     <source-file src="src/ios/Model/CULPath.h" target-dir="Model/"/>
 
+<!-- sources for Parser folder -->
+    <source-file src="src/ios/Parser/CULXmlTags.m" target-dir="Parser/"/>
+    <source-file src="src/ios/Parser/CULXmlTags.h" target-dir="Parser/"/>
+
   </platform>
 
   <platform name="android">

@@ -1,9 +1,7 @@
 //
 //  CULHost.m
-//  TestUL
 //
 //  Created by Nikolay Demyankov on 15.09.15.
-//
 //
 
 #import "CULHost.h"
