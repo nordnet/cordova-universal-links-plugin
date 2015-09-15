@@ -1,0 +1,23 @@
+//
+//  CULPath.m
+//  TestUL
+//
+//  Created by Nikolay Demyankov on 15.09.15.
+//
+//
+
+#import "CULPath.h"
+
+@implementation CULPath
+
+- (instancetype)initWithUrlPath:(NSString *)urlPath andEvent:(NSString *)event {
+    self = [super init];
+    if (self) {
+        _url = urlPath;
+        _event = event;
+    }
+    
+    return self;
+}
+
+@end
