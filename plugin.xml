@@ -54,6 +54,13 @@
     <source-file src="src/ios/Parser/CULXmlTags.m" target-dir="Parser/"/>
     <source-file src="src/ios/Parser/CULXmlTags.h" target-dir="Parser/"/>
 
+    <source-file src="src/ios/Parser/CULConfigXmlParser.m" target-dir="Parser/"/>
+    <source-file src="src/ios/Parser/CULConfigXmlParser.h" target-dir="Parser/"/>
+
+<!-- sources for Utils folder -->
+    <source-file src="src/ios/Utils/NSBundle+CULPlugin.m" target-dir="Utils/"/>
+    <source-file src="src/ios/Utils/NSBundle+CULPlugin.h" target-dir="Utils/"/>
+
   </platform>
 
   <platform name="android">
