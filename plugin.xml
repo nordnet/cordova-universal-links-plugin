@@ -82,7 +82,7 @@
 
 <!-- sources for package: com.nordnetab.cordova.ul.model -->
     <source-file src="src/android/com/nordnetab/cordova/ul/model/JSMessage.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
-    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULDomain.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
+    <source-file src="src/android/com/nordnetab/cordova/ul/model/ULHost.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
     <source-file src="src/android/com/nordnetab/cordova/ul/model/ULPath.java" target-dir="src/com/nordnetab/cordova/ul/model/"/>
 
 <!-- sources for package: com.nordnetab.cordova.ul.parser -->
