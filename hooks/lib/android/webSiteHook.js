@@ -58,7 +58,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    * @return {String} data from the template file
    */
   function readTemplate(projectRoot) {
-    var filePath = path.join(projectRoot, 'plugins', 'cordova-universal-links-plugin', 'web_hooks', 'android_web_hook_tpl.html'),
+    var filePath = path.join(projectRoot, 'plugins', 'cordova-universal-links-plugin', 'ul_web_hooks', 'android_web_hook_tpl.html'),
       tplData = null;
 
     try {
@@ -127,7 +127,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    * @return {boolean} true - if data was saved; otherwise - false;
    */
   function saveWebHook(projectRoot, hookContent) {
-    var dirPath = path.join(projectRoot, 'web_hooks', 'android'),
+    var dirPath = path.join(projectRoot, 'ul_web_hooks', 'android'),
       filePath = path.join(dirPath, WEB_HOOK_FILE_NAME),
       isSaved = true;
 

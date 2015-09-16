@@ -72,7 +72,7 @@ TODO: cleanup!
   }
 
   function getWebHookDirectory() {
-    return path.join(getProjectRoot(), 'web_hooks', 'ios');
+    return path.join(getProjectRoot(), 'ul_web_hooks', 'ios');
   }
 
   function getProjectRoot() {
