@@ -10,7 +10,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
 
   var fs = require('fs'),
     path = require('path'),
-    ConfigXmlHelper = require('./configXmlHelper.js'),
+    ConfigXmlHelper = require('../configXmlHelper.js'),
     WEB_HOOK_FILE_NAME = 'android_web_hook.html',
     LINK_PLACEHOLDER = '[__LINKS__]',
     LINK_TEMPLATE = '<link rel="alternate" href="android-app://<package_name>/<scheme>/<host><path>" />';

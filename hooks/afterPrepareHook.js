@@ -5,9 +5,9 @@ It will inject required preferences in the platform-specific projects, based on 
 data you have specified in the projects config.xml file.
 */
 
-var ulConfigParser = require('./lib/ulConfigXmlParser.js'),
-  ulAndroidManifestWriter = require('./lib/ulAndroidManifestWriter.js'),
-  ulAndroidWebHook = require('./lib/ulAndroidWebHook.js'),
+var configParser = require('./lib/configXmlParser.js'),
+  androidManifestWriter = require('./lib/android/manifestWriter.js'),
+  androidWebHook = require('./lib/android/webSiteHook.js'),
   ANDROID = 'android',
   IOS = 'ios';
 
@@ -21,7 +21,7 @@ module.exports = function(ctx) {
  * @param {Object} cordovaContext - cordova context object
  */
 function run(cordovaContext) {
-  var pluginPreferences = ulConfigParser.readPreferences(cordovaContext),
+  var pluginPreferences = configParser.readPreferences(cordovaContext),
     platformsList = cordovaContext.opts.platforms;
 
   platformsList.forEach(function(platform) {
@@ -48,10 +48,10 @@ function run(cordovaContext) {
  */
 function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
   // inject preferenes into AndroidManifest.xml
-  ulAndroidManifestWriter.writePreferences(cordovaContext, pluginPreferences);
+  androidManifestWriter.writePreferences(cordovaContext, pluginPreferences);
 
   // generate html file with the <link> tags that you should inject on the website.
-  ulAndroidWebHook.generate(cordovaContext, pluginPreferences);
+  androidWebHook.generate(cordovaContext, pluginPreferences);
 }
 
 /**

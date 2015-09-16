@@ -4,7 +4,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
 (function() {
 
   var path = require('path'),
-    XmlHelper = require('./xmlHelper.js'),
+    XmlHelper = require('../xmlHelper.js'),
     xml = new XmlHelper();
 
   module.exports = {
