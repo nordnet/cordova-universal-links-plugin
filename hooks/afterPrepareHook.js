@@ -9,6 +9,7 @@ var configParser = require('./lib/configXmlParser.js'),
   androidManifestWriter = require('./lib/android/manifestWriter.js'),
   androidWebHook = require('./lib/android/webSiteHook.js'),
   iosProjectEntitlements = require('./lib/ios/projectEntitlements.js'),
+  iosAppSiteAssociationFile = require('./lib/ios/appleAppSiteAssociationFile.js'),
   ANDROID = 'android',
   IOS = 'ios';
 
@@ -63,11 +64,11 @@ function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
  */
 function activateUniversalLinksInIos(cordovaContext, pluginPreferences) {
   // modify xcode project preferences
-
+  
 
   // generate entitlements file
   iosProjectEntitlements.generateAssociatedDomainsEntitlements(cordovaContext, pluginPreferences);
 
   // generate apple-site-association-file
-
+  iosAppSiteAssociationFile.generate(cordovaContext, pluginPreferences);
 }
