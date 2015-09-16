@@ -10,6 +10,7 @@ var configParser = require('./lib/configXmlParser.js'),
   androidWebHook = require('./lib/android/webSiteHook.js'),
   iosProjectEntitlements = require('./lib/ios/projectEntitlements.js'),
   iosAppSiteAssociationFile = require('./lib/ios/appleAppSiteAssociationFile.js'),
+  iosProjectPreferences = require('./lib/ios/xcodePreferences.js'),
   ANDROID = 'android',
   IOS = 'ios';
 
@@ -25,6 +26,10 @@ module.exports = function(ctx) {
 function run(cordovaContext) {
   var pluginPreferences = configParser.readPreferences(cordovaContext),
     platformsList = cordovaContext.opts.platforms;
+
+  if (pluginPreferences == null) {
+    return;
+  }
 
   platformsList.forEach(function(platform) {
     switch (platform) {
@@ -64,7 +69,7 @@ function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
  */
 function activateUniversalLinksInIos(cordovaContext, pluginPreferences) {
   // modify xcode project preferences
-  
+  iosProjectPreferences.enableAssociativeDomainsCapability(cordovaContext);
 
   // generate entitlements file
   iosProjectEntitlements.generateAssociatedDomainsEntitlements(cordovaContext, pluginPreferences);
