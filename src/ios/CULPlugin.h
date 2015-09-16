@@ -11,4 +11,6 @@
 
 - (void)jsInitPlugin:(CDVInvokedUrlCommand *)command;
 
+- (BOOL)handleUserActivity:(NSUserActivity *)userActivity;
+
 @end
