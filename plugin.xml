@@ -43,6 +43,10 @@
     <source-file src="src/ios/AppDelegate+CULPlugin.m"/>
     <header-file src="src/ios/AppDelegate+CULPlugin.h"/>
 
+<!-- sources for JS folder -->
+    <source-file src="src/ios/JS/CDVPluginResult+CULPlugin.m" target-dir="JS/"/>
+    <header-file src="src/ios/JS/CDVPluginResult+CULPlugin.h" target-dir="JS/"/>
+
 <!-- sources for Model folder -->
     <source-file src="src/ios/Model/CULHost.m" target-dir="Model/"/>
     <source-file src="src/ios/Model/CULHost.h" target-dir="Model/"/>
