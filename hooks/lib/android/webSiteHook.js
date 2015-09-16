@@ -31,7 +31,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
   function generateWebHook(cordovaContext, pluginPreferences) {
     var projectRoot = cordovaContext.opts.projectRoot,
       configXmlHelper = new ConfigXmlHelper(cordovaContext),
-      packageName = configXmlHelper.getPackageName(),
+      packageName = configXmlHelper.getPackageName('android'),
       template = readTemplate(projectRoot);
 
     // if template was not found - exit
