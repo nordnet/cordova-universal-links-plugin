@@ -63,7 +63,7 @@ Helper class to read/write config.xml file from/to different sources:
         break;
       }
       case IOS: {
-        packageName = config.ios_packageName();
+        packageName = config.ios_CFBundleIdentifier();
         break;
       }
     }
@@ -140,7 +140,7 @@ Helper class to read/write config.xml file from/to different sources:
    * @return {String} absolute path to config.xml file
    */
   function pathToIosConfigXml() {
-    var projectName = getProjectName(cordovaContext, projectRoot);
+    var projectName = getProjectName(context, projectRoot);
 
     return path.join(projectRoot, 'platforms', IOS, projectName, CONFIG_FILE_NAME);
   }
