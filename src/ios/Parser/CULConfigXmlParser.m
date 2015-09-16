@@ -1,19 +1,16 @@
 //
 //  CULConfigXmlParser.m
-//  TestUL
 //
 //  Created by Nikolay Demyankov on 15.09.15.
-//
 //
 
 #import "CULConfigXmlParser.h"
 #import "NSBundle+CULPlugin.h"
-#import "CULHost.h"
 #import "CULPath.h"
 #import "CULXmlTags.h"
 
 @interface CULConfigXmlParser() <NSXMLParserDelegate> {
-    NSMutableArray *_hostsList;
+    NSMutableArray<CULHost *> *_hostsList;
     BOOL _isInsideMainTag;
     BOOL _didParseMainBlock;
     BOOL _isInsideHostBlock;
@@ -26,13 +23,13 @@
 
 #pragma mark Public API
 
-+ (NSArray *)parse {
++ (NSArray<CULHost *> *)parse {
     CULConfigXmlParser *parser = [[CULConfigXmlParser alloc] init];
     
     return [parser parseConfig];
 }
 
-- (NSArray *)parseConfig {
+- (NSArray<CULHost *> *)parseConfig {
     NSURL *cordovaConfigURL = [NSURL fileURLWithPath:[NSBundle pathToCordovaConfigXml]];
     NSXMLParser *configParser = [[NSXMLParser alloc] initWithContentsOfURL:cordovaConfigURL];
     if (configParser == nil) {
@@ -82,14 +79,14 @@
 
 #pragma mark Private API
 
-- (void)processHostTag:(NSDictionary *)attributes {
+- (void)processHostTag:(NSDictionary<NSString *, NSString *> *)attributes {
     _processedHost = [[CULHost alloc] initWithHostName:attributes[kCULHostNameXmlAttribute]
                                                 scheme:attributes[kCULHostSchemeXmlAttribute]
                                                  event:attributes[kCULHostEventXmlAttribute]];
     _isInsideHostBlock = YES;
 }
 
-- (void)processPathTag:(NSDictionary *)attributes {
+- (void)processPathTag:(NSDictionary<NSString *, NSString *> *)attributes {
     NSString *event = attributes[kCULPathEventXmlAttribute];
     if (event == nil) {
         event = _processedHost.event;

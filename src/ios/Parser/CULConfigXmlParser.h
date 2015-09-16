@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CULHost.h"
 
 @interface CULConfigXmlParser : NSObject
 
-+ (NSArray *)parse;
++ (NSArray<CULHost *> *)parse;
 
 @end

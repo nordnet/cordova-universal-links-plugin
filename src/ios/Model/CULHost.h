@@ -12,7 +12,7 @@
 @property (nonatomic, readonly, strong) NSString *name;
 @property (nonatomic, readonly, strong) NSString *scheme;
 @property (nonatomic, readonly, strong) NSString *event;
-@property (nonatomic, readonly, strong) NSArray *paths;
+@property (nonatomic, readonly, strong) NSArray<CULPath *> *paths;
 
 @property (nonatomic, readonly, getter=isWildcard) BOOL isWildcard;
 

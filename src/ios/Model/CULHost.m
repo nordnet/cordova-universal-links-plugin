@@ -10,7 +10,7 @@ static NSString *const DEFAULT_EVENT = @"ul_didLaunchAppFromLink";
 static NSString *const DEFAULT_SCHEME = @"http";
 
 @interface CULHost() {
-    NSMutableArray *_paths;
+    NSMutableArray<CULPath *> *_paths;
 }
 
 @end
@@ -42,7 +42,7 @@ static NSString *const DEFAULT_SCHEME = @"http";
     }
 }
 
-- (NSArray *)paths {
+- (NSArray<CULPath *> *)paths {
     return _paths;
 }
 
