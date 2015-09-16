@@ -31,7 +31,6 @@ Small helper class to read/write from/to xml file.
         }
       });
     } catch (err) {
-      console.log(err);
     }
 
     return parsedData;
