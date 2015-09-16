@@ -8,6 +8,7 @@ data you have specified in the projects config.xml file.
 var configParser = require('./lib/configXmlParser.js'),
   androidManifestWriter = require('./lib/android/manifestWriter.js'),
   androidWebHook = require('./lib/android/webSiteHook.js'),
+  iosProjectEntitlements = require('./lib/ios/projectEntitlements.js'),
   ANDROID = 'android',
   IOS = 'ios';
 
@@ -61,5 +62,12 @@ function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
  * @param {Object} pluginPreferences - plugin preferences from the config.xml file. Basically, content from <universal-links> tag.
  */
 function activateUniversalLinksInIos(cordovaContext, pluginPreferences) {
+  // modify xcode project preferences
+
+
+  // generate entitlements file
+  iosProjectEntitlements.generateAssociatedDomainsEntitlements(cordovaContext, pluginPreferences);
+
+  // generate apple-site-association-file
 
 }
