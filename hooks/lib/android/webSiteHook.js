@@ -10,6 +10,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
 
   var fs = require('fs'),
     path = require('path'),
+    mkpath = require('mkpath'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
     WEB_HOOK_FILE_NAME = 'android_web_hook.html',
     LINK_PLACEHOLDER = '[__LINKS__]',
@@ -126,9 +127,18 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    * @return {boolean} true - if data was saved; otherwise - false;
    */
   function saveWebHook(projectRoot, hookContent) {
-    var filePath = path.join(projectRoot, WEB_HOOK_FILE_NAME),
+    var dirPath = path.join(projectRoot, 'web_hooks', 'android'),
+      filePath = path.join(dirPath, WEB_HOOK_FILE_NAME),
       isSaved = true;
 
+    // ensure directory exists
+    try {
+      mkpath.sync(dirPath);
+    } catch(err) {
+      console.log(err);
+    }
+
+    // write data to file
     try {
       fs.writeFileSync(filePath, hookContent, 'utf8');
     } catch (err) {
