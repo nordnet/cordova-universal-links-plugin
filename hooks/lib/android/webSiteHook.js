@@ -29,7 +29,8 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    */
   function generateWebHook(cordovaContext, pluginPreferences) {
     var projectRoot = cordovaContext.opts.projectRoot,
-      packageName = getPackageName(cordovaContext, projectRoot),
+      configXmlHelper = new ConfigXmlHelper(cordovaContext),
+      packageName = configXmlHelper.getPackageName(),
       template = readTemplate(projectRoot);
 
     // if template was not found - exit
@@ -115,27 +116,6 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
     }
 
     return linkTpl.replace('<path>', path);
-  }
-
-  /**
-   * Gettter for android application package name.
-   * It should be defined in config.xml file in your project's root directory.
-   *
-   * @param {Object} ctx - cordova context object
-   * @param {String} projectRoot - absolute path to project's root directory
-   * @return {String} android application package name
-   */
-  function getPackageName(ctx, projectRoot) {
-    var configFilePath = path.join(projectRoot, 'config.xml'),
-      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
-      config = new ConfigParser(configFilePath);
-
-    var packageName = config.android_packageName();
-    if (packageName === undefined) {
-      packageName = config.packageName();
-    }
-
-    return packageName;
   }
 
   /**

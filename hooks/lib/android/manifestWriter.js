@@ -4,8 +4,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
 (function() {
 
   var path = require('path'),
-    XmlHelper = require('../xmlHelper.js'),
-    xml = new XmlHelper();
+    xmlHelper = require('../xmlHelper.js');
 
   module.exports = {
     writePreferences: writePreferences
@@ -21,7 +20,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
    */
   function writePreferences(cordovaContext, pluginPreferences) {
     var pathToManifest = path.join(cordovaContext.opts.projectRoot, 'platforms', 'android', 'AndroidManifest.xml'),
-      manifestSource = xml.readXmlAsJson(pathToManifest),
+      manifestSource = xmlHelper.readXmlAsJson(pathToManifest),
       cleanManifest,
       updatedManifest;
 
@@ -32,7 +31,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
     updatedManifest = injectOptions(cleanManifest, pluginPreferences);
 
     // save new version of the AndroidManifest
-    xml.writeJsonAsXml(updatedManifest, pathToManifest);
+    xmlHelper.writeJsonAsXml(updatedManifest, pathToManifest);
   }
 
   // endregion

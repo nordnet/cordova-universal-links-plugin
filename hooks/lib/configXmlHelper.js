@@ -6,11 +6,10 @@ Helper class to read/write config.xml file from/to different sources:
 */
 (function() {
   var path = require('path'),
-    XmlHelper = require('./xmlHelper.js'),
+    xmlHelper = require('./xmlHelper.js'),
     ANDROID = 'android',
     IOS = 'ios',
     CONFIG_FILE_NAME = 'config.xml',
-    xml,
     context,
     projectRoot;
 
@@ -26,7 +25,6 @@ Helper class to read/write config.xml file from/to different sources:
   function ConfigXmlHelper(cordovaContext) {
     context = cordovaContext;
     projectRoot = context.opts.projectRoot;
-    xml = new XmlHelper();
   }
 
   /**
@@ -38,7 +36,7 @@ Helper class to read/write config.xml file from/to different sources:
   ConfigXmlHelper.prototype.read = function(platform) {
     var filePath = getConfigXmlFilePath(platform);
 
-    return xml.readXmlAsJson(filePath);
+    return xmlHelper.readXmlAsJson(filePath);
   }
 
   /**
@@ -51,12 +49,47 @@ Helper class to read/write config.xml file from/to different sources:
   ConfigXmlHelper.prototype.write = function(data, platform) {
     var filePath = getConfigXmlFilePath(platform);
 
-    return xml.writeJsonAsXml(data, filePath);
+    return xmlHelper.writeJsonAsXml(data, filePath);
+  }
+
+  ConfigXmlHelper.prototype.getPackageName = function(platform) {
+    var configFilePath = getConfigXmlFilePath(platform),
+      config = getCordovaConfigParser(configFilePath),
+      packageName;
+
+    switch (platform) {
+      case ANDROID: {
+        packageName = config.android_packageName();
+        break;
+      }
+      case IOS: {
+        packageName = config.ios_packageName();
+        break;
+      }
+    }
+    if (packageName === undefined || packageName.length == 0) {
+      packageName = config.packageName();
+    }
+
+    return packageName;
+  }
+
+  ConfigXmlHelper.prototype.getProjectName = function() {
+    var configFilePath = getConfigXmlFilePath(),
+      config = getCordovaConfigParser(configFilePath);
+
+    return config.name();
   }
 
   // endregion
 
   // region Private API
+
+  function getCordovaConfigParser(configFilePath) {
+    var ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser');
+
+    return new ConfigParser(configFilePath);
+  }
 
   /**
    * Get absolute path to the config.xml. Depends on the provided platform flag.

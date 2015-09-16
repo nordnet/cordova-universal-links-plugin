@@ -6,12 +6,10 @@ Small helper class to read/write from/to xml file.
   var fs = require('fs'),
     xml2js = require('xml2js');
 
-  module.exports = XmlHelper;
-
-  /*
-   * Constructor.
-   */
-  function XmlHelper() {}
+  module.exports = {
+    readXmlAsJson: readXmlAsJson,
+    writeJsonAsXml: writeJsonAsXml
+  };
 
   /**
    * Read data from the xml file as JSON object.
@@ -19,7 +17,7 @@ Small helper class to read/write from/to xml file.
    * @param {String} filePath - absolute path to xml file
    * @return {Object} JSON object with the contents of the xml file
    */
-  XmlHelper.prototype.readXmlAsJson = function(filePath) {
+   function readXmlAsJson(filePath) {
     var xmlData,
       xmlParser,
       parsedData;
@@ -46,8 +44,8 @@ Small helper class to read/write from/to xml file.
    * @param {String} filePath - path to the xml file where data should be saved
    * @return {boolean} true - if data saved to file; false - otherwise
    */
-  XmlHelper.prototype.writeJsonAsXml = function(jsData, filePath) {
-    var xmlBuilder = new xml2js.Builder(),
+   function writeJsonAsXml(jsData, filePath, options) {
+    var xmlBuilder = new xml2js.Builder(options),
       changedXmlData = xmlBuilder.buildObject(jsData),
       isSaved = true;
 
