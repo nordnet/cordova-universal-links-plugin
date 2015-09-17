@@ -8,7 +8,7 @@
     context;
 
   module.exports = {
-    enableAssociativeDomainsCapability : enableAssociativeDomainsCapability
+    enableAssociativeDomainsCapability: enableAssociativeDomainsCapability
   }
 
   function enableAssociativeDomainsCapability(cordovaContext) {
@@ -21,6 +21,7 @@
     // add entitlements file to pbxfilereference
     addPbxReference(projectFile.xcode);
 
+    // save changes
     projectFile.write();
   }
 
@@ -38,13 +39,10 @@
       entitlementsRelativeFilePath = pathToEntitlementsFile(),
       isAlreadyInReferencesSection = false;
 
-    //console.log(JSON.stringify(rootGroup, null, 2));
-
     for (var uuid in fileReferenceSection) {
       var fileRefEntry = fileReferenceSection[uuid];
       if (fileRefEntry['path'].indexOf(entitlementsRelativeFilePath) > -1) {
         isAlreadyInReferencesSection = true;
-        //console.log(JSON.stringify(fileRefEntry, null, 2));
         break;
       }
     }
@@ -58,13 +56,13 @@
     var entitlementsPbxFile = new pbxFile(entitlementsRelativeFilePath);
     entitlementsPbxFile.fileRef = xcodeProject.generateUuid();
     entitlementsPbxFile.uuid = xcodeProject.generateUuid();
-    //console.log(JSON.stringify(entitlementsPbxFile, null, 2));
 
     xcodeProject.addToPbxFileReferenceSection(entitlementsPbxFile);
 
-    rootGroup.children.push({'value': entitlementsPbxFile.uuid, 'comment': path.basename(entitlementsRelativeFilePath)});
-
-    //console.log(JSON.stringify(nonComments(xcodeProject.pbxFileReferenceSection()), null, 2));
+    rootGroup.children.push({
+      'value': entitlementsPbxFile.fileRef,
+      'comment': path.basename(entitlementsRelativeFilePath)
+    });
   }
 
   /**
@@ -90,8 +88,6 @@
   }
 
   function activateAssociativeDomains(xcodeProject) {
-    //console.log('CONSOLE: ' + JSON.stringify(xcodeProject, null, 2));
-
     var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
       entitlementsFilePath = pathToEntitlementsFile(),
       config,
@@ -99,8 +95,6 @@
 
     for (config in configurations) {
       buildSettings = configurations[config].buildSettings;
-      //console.log(JSON.stringify(buildSettings, null, 2));
-
       buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
       buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
     }
