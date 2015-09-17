@@ -2,6 +2,7 @@
 
   var path = require('path'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
+    pbxFile = require('xcode/lib/pbxFile'),
     IOS_DEPLOYMENT_TARGET = '9.0',
     COMMENT_KEY = /_comment$/,
     context;
@@ -13,8 +14,13 @@
   function enableAssociativeDomainsCapability(cordovaContext) {
     context = cordovaContext;
 
+    // adjust preferences
     var projectFile = loadProjectFile();
     activateAssociativeDomains(projectFile.xcode);
+
+    // add entitlements file to pbxfilereference
+    addPbxReference(projectFile.xcode);
+
     projectFile.write();
   }
 
@@ -24,6 +30,41 @@
 
   function projectRoot() {
     return context.opts.projectRoot;
+  }
+
+  function addPbxReference(xcodeProject) {
+    var fileReferenceSection = nonComments(xcodeProject.pbxFileReferenceSection()),
+      rootGroup = nonComments(xcodeProject.pbxGroupByName('CustomTemplate')),
+      entitlementsRelativeFilePath = pathToEntitlementsFile(),
+      isAlreadyInReferencesSection = false;
+
+    //console.log(JSON.stringify(rootGroup, null, 2));
+
+    for (var uuid in fileReferenceSection) {
+      var fileRefEntry = fileReferenceSection[uuid];
+      if (fileRefEntry['path'].indexOf(entitlementsRelativeFilePath) > -1) {
+        isAlreadyInReferencesSection = true;
+        //console.log(JSON.stringify(fileRefEntry, null, 2));
+        break;
+      }
+    }
+    if (isAlreadyInReferencesSection) {
+      console.log('Entitlements file is in reference section.');
+      return;
+    }
+
+    console.log('Entitlements file is not in references section, adding it');
+
+    var entitlementsPbxFile = new pbxFile(entitlementsRelativeFilePath);
+    entitlementsPbxFile.fileRef = xcodeProject.generateUuid();
+    entitlementsPbxFile.uuid = xcodeProject.generateUuid();
+    //console.log(JSON.stringify(entitlementsPbxFile, null, 2));
+
+    xcodeProject.addToPbxFileReferenceSection(entitlementsPbxFile);
+
+    rootGroup.children.push({'value': entitlementsPbxFile.uuid, 'comment': path.basename(entitlementsRelativeFilePath)});
+
+    //console.log(JSON.stringify(nonComments(xcodeProject.pbxFileReferenceSection()), null, 2));
   }
 
   /**

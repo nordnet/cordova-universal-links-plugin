@@ -4,7 +4,7 @@ It will check all necessary module dependencies and install the missing ones loc
 */
 
 var exec = require('child_process').exec,
-  modules = ['xml2js', 'mkpath', 'rimraf'];
+  modules = ['xml2js', 'mkpath', 'rimraf', 'xcode'];
 
 // region NPM specific
 
