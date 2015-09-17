@@ -53,7 +53,7 @@ Helper class to read/write config.xml file from/to different sources:
   }
 
   ConfigXmlHelper.prototype.getPackageName = function(platform) {
-    var configFilePath = getConfigXmlFilePath(platform),
+    var configFilePath = getConfigXmlFilePath(),
       config = getCordovaConfigParser(configFilePath),
       packageName;
 
@@ -74,11 +74,15 @@ Helper class to read/write config.xml file from/to different sources:
     return packageName;
   }
 
+  /**
+   * Get name of the current project.
+   *
+   * @param {String} platform
+   *
+   * @return {String} name of the project
+   */
   ConfigXmlHelper.prototype.getProjectName = function() {
-    var configFilePath = getConfigXmlFilePath(),
-      config = getCordovaConfigParser(configFilePath);
-
-    return config.name();
+    return getProjectName();
   }
 
   // endregion
@@ -118,20 +122,11 @@ Helper class to read/write config.xml file from/to different sources:
     return configXmlPath;
   }
 
-  /**
-   * Get name of the current project.
-   *
-   * @param {Object} ctx - cordova context instance
-   * @param {String} projectRoot - current root of the project
-   *
-   * @return {String} name of the project
-   */
-  function getProjectName(ctx, projectRoot) {
-    var ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
-      pathToProjectConfig = pathToProjectConfigXml(),
-      cfg = new ConfigParser(pathToProjectConfig);
+  function getProjectName() {
+    var configFilePath = getConfigXmlFilePath(),
+      config = getCordovaConfigParser(configFilePath);
 
-    return cfg.name();
+    return config.name();
   }
 
   /**
@@ -140,7 +135,7 @@ Helper class to read/write config.xml file from/to different sources:
    * @return {String} absolute path to config.xml file
    */
   function pathToIosConfigXml() {
-    var projectName = getProjectName(context, projectRoot);
+    var projectName = getProjectName('ios');
 
     return path.join(projectRoot, 'platforms', IOS, projectName, CONFIG_FILE_NAME);
   }
