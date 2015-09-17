@@ -49,7 +49,7 @@
   }
 
   function activateAssociativeDomains(xcodeProject) {
-    //console.log(JSON.stringify(xcodeProject, null, 2));
+    //console.log('CONSOLE: ' + JSON.stringify(xcodeProject, null, 2));
 
     var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
       entitlementsFilePath = pathToEntitlementsFile(),
@@ -63,8 +63,8 @@
       buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
       buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
     }
-    console.log('IOS project now has deployment target set as:[' + IOS_DEPLOYMENT_TARGET + '] ...');
-    console.log('IOS project Code Sign Entitlements set to: ' + entitlementsFilePath + ' ...');
+    console.log('IOS project now has deployment target set as: ' + IOS_DEPLOYMENT_TARGET);
+    console.log('IOS project Code Sign Entitlements now set to: ' + entitlementsFilePath);
   }
 
   function pathToEntitlementsFile() {
