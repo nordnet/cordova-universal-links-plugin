@@ -17,8 +17,8 @@ channel.onCordovaReady.subscribe(function() {
 });
 
 /**
- * Method is called when native side sends us different events.
- * Those events can be about update download/installation process.
+ * Method is called when native side sends us events about application launch from the link click.
+ * Received message holds information about the clicked link and the event name, that should be broadcasted.
  *
  * @param {String} msg - JSON formatted string with call arguments
  */
