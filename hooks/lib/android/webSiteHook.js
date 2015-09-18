@@ -12,7 +12,8 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
     path = require('path'),
     mkpath = require('mkpath'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
-    WEB_HOOK_FILE_NAME = 'android_web_hook.html',
+    WEB_HOOK_FILE_PATH = path.join('ul_web_hooks', 'android', 'android_web_hook.html'),
+    WEB_HOOK_TPL_FILE_PATH = path.join('plugins', 'cordova-universal-links-plugin', 'ul_web_hooks', 'android_web_hook_tpl.html'),
     LINK_PLACEHOLDER = '[__LINKS__]',
     LINK_TEMPLATE = '<link rel="alternate" href="android-app://<package_name>/<scheme>/<host><path>" />';
 
@@ -58,7 +59,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    * @return {String} data from the template file
    */
   function readTemplate(projectRoot) {
-    var filePath = path.join(projectRoot, 'plugins', 'cordova-universal-links-plugin', 'ul_web_hooks', 'android_web_hook_tpl.html'),
+    var filePath = path.join(projectRoot, WEB_HOOK_TPL_FILE_PATH),
       tplData = null;
 
     try {
@@ -112,6 +113,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
       path = path.replace('*', '.*');
     }
 
+    // path should start with /
     if (path.indexOf('/') != 0) {
       path = '/' + path;
     }
@@ -127,16 +129,11 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
    * @return {boolean} true - if data was saved; otherwise - false;
    */
   function saveWebHook(projectRoot, hookContent) {
-    var dirPath = path.join(projectRoot, 'ul_web_hooks', 'android'),
-      filePath = path.join(dirPath, WEB_HOOK_FILE_NAME),
+    var filePath = path.join(projectRoot, WEB_HOOK_FILE_PATH),
       isSaved = true;
 
     // ensure directory exists
-    try {
-      mkpath.sync(dirPath);
-    } catch(err) {
-      console.log(err);
-    }
+    createDirectoryIfNeeded(path.dirname(filePath));
 
     // write data to file
     try {
@@ -148,6 +145,19 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
     }
 
     return isSaved;
+  }
+
+  /**
+   * Create directory if it doesn't exist yet.
+   *
+   * @param {String} dir - absolute path to directory
+   */
+  function createDirectoryIfNeeded(dir) {
+    try {
+      mkpath.sync(dir);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   // endregion

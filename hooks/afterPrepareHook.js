@@ -27,6 +27,7 @@ function run(cordovaContext) {
   var pluginPreferences = configParser.readPreferences(cordovaContext),
     platformsList = cordovaContext.opts.platforms;
 
+  // if no preferences are found - exist
   if (pluginPreferences == null) {
     return;
   }

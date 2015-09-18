@@ -62,7 +62,7 @@ function installRequiredNodeModules() {
       console.log(err);
       return;
     } else {
-      console.log('Package ' + moduleName + ' is installed');
+      console.log('Module ' + moduleName + ' is installed');
       installRequiredNodeModules();
     }
   });

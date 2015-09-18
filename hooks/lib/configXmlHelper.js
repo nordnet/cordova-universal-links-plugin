@@ -1,8 +1,5 @@
 /*
-Helper class to read/write config.xml file from/to different sources:
-  - project root;
-  - android-specific config.xml;
-  - ios-specific config.xml.
+Helper class to read data from config.xml file.
 */
 (function() {
   var path = require('path'),
@@ -30,42 +27,36 @@ Helper class to read/write config.xml file from/to different sources:
   /**
    * Read config.xml data as JSON object.
    *
-   * @param {String} platform - if defined - read platform-specific config.xml; if not - read it from the project root;
    * @return {Object} JSON object with data from config.xml
    */
-  ConfigXmlHelper.prototype.read = function(platform) {
-    var filePath = getConfigXmlFilePath(platform);
+  ConfigXmlHelper.prototype.read = function() {
+    var filePath = getConfigXmlFilePath();
 
     return xmlHelper.readXmlAsJson(filePath);
   }
 
   /**
-   * Write JSON object into config.xml file.
+   * Get package name for the application. Depends on the platform.
    *
-   * @param {Object} data - JSON object to write to file;
-   * @param {String} platform - if defined - save to the platform-specific config.xml; if not - write to the project root;
-   * @return {boolean} true - if data was successfully saved to the file; otherwise - false.
+   * @param {String} platform - 'ios' or 'android'; for what platform we need a package name
+   * @return {String} package/bundle name
    */
-  ConfigXmlHelper.prototype.write = function(data, platform) {
-    var filePath = getConfigXmlFilePath(platform);
-
-    return xmlHelper.writeJsonAsXml(data, filePath);
-  }
-
   ConfigXmlHelper.prototype.getPackageName = function(platform) {
     var configFilePath = getConfigXmlFilePath(),
       config = getCordovaConfigParser(configFilePath),
       packageName;
 
     switch (platform) {
-      case ANDROID: {
-        packageName = config.android_packageName();
-        break;
-      }
-      case IOS: {
-        packageName = config.ios_CFBundleIdentifier();
-        break;
-      }
+      case ANDROID:
+        {
+          packageName = config.android_packageName();
+          break;
+        }
+      case IOS:
+        {
+          packageName = config.ios_CFBundleIdentifier();
+          break;
+        }
     }
     if (packageName === undefined || packageName.length == 0) {
       packageName = config.packageName();
@@ -77,8 +68,6 @@ Helper class to read/write config.xml file from/to different sources:
   /**
    * Get name of the current project.
    *
-   * @param {String} platform
-   *
    * @return {String} name of the project
    */
   ConfigXmlHelper.prototype.getProjectName = function() {
@@ -89,6 +78,12 @@ Helper class to read/write config.xml file from/to different sources:
 
   // region Private API
 
+  /**
+   * Get config parser from cordova library.
+   *
+   * @param {String} configFilePath absolute path to the config.xml file
+   * @return {Object}
+   */
   function getCordovaConfigParser(configFilePath) {
     var ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser');
 
@@ -96,66 +91,20 @@ Helper class to read/write config.xml file from/to different sources:
   }
 
   /**
-   * Get absolute path to the config.xml. Depends on the provided platform flag.
-   *
-   * @param {String} platform - for which platform we need config.xml file; if not defined - file is taken from the project root.
+   * Get absolute path to the config.xml.
    */
-  function getConfigXmlFilePath(platform) {
-    var configXmlPath = null;
-    switch (platform) {
-      case IOS:
-        {
-          configXmlPath = pathToIosConfigXml();
-          break;
-        }
-      case ANDROID:
-        {
-          configXmlPath = pathToAndroidConfigXml();
-          break;
-        }
-      default:
-        {
-          configXmlPath = pathToProjectConfigXml();
-        }
-    }
-
-    return configXmlPath;
+  function getConfigXmlFilePath() {
+    return path.join(projectRoot, CONFIG_FILE_NAME);
   }
 
+  /**
+   * Get project name from config.xml
+   */
   function getProjectName() {
     var configFilePath = getConfigXmlFilePath(),
       config = getCordovaConfigParser(configFilePath);
 
     return config.name();
-  }
-
-  /**
-   * Get path to config.xml inside iOS project.
-   *
-   * @return {String} absolute path to config.xml file
-   */
-  function pathToIosConfigXml() {
-    var projectName = getProjectName('ios');
-
-    return path.join(projectRoot, 'platforms', IOS, projectName, CONFIG_FILE_NAME);
-  }
-
-  /**
-   * Get path to config.xml inside Android project.
-   *
-   * @return {String} absolute path to config.xml file
-   */
-  function pathToAndroidConfigXml() {
-    return path.join(projectRoot, 'platforms', ANDROID, 'res', 'xml', CONFIG_FILE_NAME);
-  }
-
-  /**
-   * Get path to config.xml inside project root directory.
-   *
-   * @return {String} absolute path to config.xml file
-   */
-  function pathToProjectConfigXml() {
-    return path.join(projectRoot, CONFIG_FILE_NAME);
   }
 
   // endregion

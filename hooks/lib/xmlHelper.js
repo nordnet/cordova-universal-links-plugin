@@ -17,7 +17,7 @@ Small helper class to read/write from/to xml file.
    * @param {String} filePath - absolute path to xml file
    * @return {Object} JSON object with the contents of the xml file
    */
-   function readXmlAsJson(filePath) {
+  function readXmlAsJson(filePath) {
     var xmlData,
       xmlParser,
       parsedData;
@@ -30,8 +30,7 @@ Small helper class to read/write from/to xml file.
           parsedData = data;
         }
       });
-    } catch (err) {
-    }
+    } catch (err) {}
 
     return parsedData;
   }
@@ -43,7 +42,7 @@ Small helper class to read/write from/to xml file.
    * @param {String} filePath - path to the xml file where data should be saved
    * @return {boolean} true - if data saved to file; false - otherwise
    */
-   function writeJsonAsXml(jsData, filePath, options) {
+  function writeJsonAsXml(jsData, filePath, options) {
     var xmlBuilder = new xml2js.Builder(options),
       changedXmlData = xmlBuilder.buildObject(jsData),
       isSaved = true;

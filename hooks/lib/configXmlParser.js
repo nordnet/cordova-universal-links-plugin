@@ -15,6 +15,12 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
 
   // region Public API
 
+  /**
+   * Read plugin preferences from the config.xml file.
+   *
+   * @param {Object} cordovaContext - cordova context object
+   * @return {Array} list of host objects
+   */
   function readPreferences(cordovaContext) {
     // read data from projects root config.xml file
     var configXml = new ConfigXmlHelper(cordovaContext).read();
@@ -38,7 +44,7 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
     }
 
     // parse xml data
-    return constructPreferencesObject(xmlHostList);
+    return constructHostsList(xmlHostList);
   }
 
   // endregion
@@ -51,17 +57,17 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
    * @param {Object} xmlPreferences - plugin preferences from config.xml as JSON object
    * @return {Array} array of JSON objects, where each entry defines host data from config.xml.
    */
-  function constructPreferencesObject(xmlPreferences) {
-    var ulObject = [];
+  function constructHostsList(xmlPreferences) {
+    var hostsList = [];
 
     xmlPreferences.forEach(function(xmlElement) {
-      var host = constructHost(xmlElement);
+      var host = constructHostEntry(xmlElement);
       if (host) {
-        ulObject.push(host);
+        hostsList.push(host);
       }
     });
 
-    return ulObject;
+    return hostsList;
   }
 
   /**
@@ -70,7 +76,7 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
    * @param {Object} xmlElement - xml data to process.
    * @return {Object} host entry as JSON object
    */
-  function constructHost(xmlElement) {
+  function constructHostEntry(xmlElement) {
     var host = {
         scheme: DEFAULT_SCHEME,
         name: '',
@@ -110,6 +116,8 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
     var paths = [];
     xmlElement.path.some(function(pathElement) {
       var url = pathElement['$']['url'];
+
+      // Ignore explicit paths if '*' is defined
       if (url === '*') {
         paths = ['*'];
         return true;
