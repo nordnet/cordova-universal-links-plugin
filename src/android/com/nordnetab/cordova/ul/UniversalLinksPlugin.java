@@ -21,11 +21,19 @@ import java.util.List;
 
 /**
  * Created by Nikolay Demyankov on 09.09.15.
+ * <p/>
+ * Plugin main class.
+ * Communicates with the JS side, handles launch intents and so on.
  */
 public class UniversalLinksPlugin extends CordovaPlugin {
 
+    // list of hosts, defined in config.xml
     private List<ULHost> supportedHosts;
+
+    // callback through which we will send events to JS
     private CallbackContext defaultCallback;
+
+    // region Public API
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -35,15 +43,10 @@ public class UniversalLinksPlugin extends CordovaPlugin {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         boolean isHandled = true;
         if (JSAction.INIT.equals(action)) {
-            setDefaultCallback(callbackContext);
+            initJS(callbackContext);
         } else {
             isHandled = false;
         }
@@ -51,23 +54,50 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         return isHandled;
     }
 
-    private void setDefaultCallback(CallbackContext callback) {
-        this.defaultCallback = callback;
+    // endregion
 
+    // region JavaScript methods
+
+    /**
+     * Initialize plugin to communicate with JavaScript side.
+     *
+     * @param callback default JS callback
+     */
+    private void initJS(CallbackContext callback) {
+        setDefaultCallback(callback);
         handleLaunchIntent();
     }
 
+    private void setDefaultCallback(CallbackContext callback) {
+        this.defaultCallback = callback;
+    }
+
+    /**
+     * Send event to JS side.
+     *
+     * @param host             host entry which corresponds to the launch link
+     * @param correspondingUri link from which our app has been started
+     */
     private void sendEventToJs(ULHost host, Uri correspondingUri) {
         if (defaultCallback == null) {
             return;
         }
 
-        PluginResult result = new PluginResult(PluginResult.Status.OK, new JSMessage(host, correspondingUri));
+        final JSMessage message = new JSMessage(host, correspondingUri);
+        final PluginResult result = new PluginResult(PluginResult.Status.OK, message);
         result.setKeepCallback(true);
 
         defaultCallback.sendPluginResult(result);
     }
 
+    // endregion
+
+    // region Intent handling
+
+    /**
+     * Read data from the launch intent.
+     * If we started the app from the link - try to process that.
+     */
     private void handleLaunchIntent() {
         if (supportedHosts == null || supportedHosts.size() == 0) {
             return;
@@ -87,6 +117,13 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         processURL(launchUri);
     }
 
+    /**
+     * Handle launch url.
+     * We will try to match it to the ones that were defined in config.xml.
+     * If matched - event will be send to JS.
+     *
+     * @param launchUri url that started the app
+     */
     private void processURL(Uri launchUri) {
         ULHost host = findHostByUrl(launchUri);
         if (host == null) {
@@ -97,6 +134,12 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         sendEventToJs(host, launchUri);
     }
 
+    /**
+     * Find host entry that matches the launch url.
+     *
+     * @param url launch url
+     * @return host entry; <code>null</code> - if none were found
+     */
     private ULHost findHostByUrl(Uri url) {
         ULHost host = null;
         for (ULHost supportedHost : supportedHosts) {
@@ -108,4 +151,6 @@ public class UniversalLinksPlugin extends CordovaPlugin {
 
         return host;
     }
+
+    // endregion
 }

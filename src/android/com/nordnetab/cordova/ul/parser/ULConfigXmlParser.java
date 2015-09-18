@@ -13,8 +13,10 @@ import java.util.List;
 
 /**
  * Created by Nikolay Demyankov on 09.09.15.
+ * <p/>
+ * Parser for config.xml. Reads only plugin-specific preferences.
  */
-public class ULConfigXmlParser  extends ConfigXmlParser {
+public class ULConfigXmlParser extends ConfigXmlParser {
 
     private final Context context;
     private List<ULHost> hostsList;
@@ -24,10 +26,22 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
     private boolean isInsideHostBlock;
     private ULHost processedHost;
 
+    // region Public API
+
+    /**
+     * Constructor
+     *
+     * @param context application context
+     */
     public ULConfigXmlParser(Context context) {
         this.context = context;
     }
 
+    /**
+     * Parse config.xml
+     *
+     * @return list of hosts, defined in the config file
+     */
     public List<ULHost> parse() {
         resetValuesToDefaultState();
         super.parse(context);
@@ -35,13 +49,9 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
         return hostsList;
     }
 
-    private void resetValuesToDefaultState() {
-        hostsList = new ArrayList<ULHost>();
-        isInsideMainTag = false;
-        didParseMainBlock = false;
-        isInsideHostBlock = false;
-        processedHost = null;
-    }
+    // endregion
+
+    // region XML processing
 
     @Override
     public void handleStartTag(XmlPullParser xml) {
@@ -91,6 +101,9 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
         }
     }
 
+    /**
+     * Parse <host />
+     */
     private void processHostBlock(XmlPullParser xml) {
         final String hostName = xml.getAttributeValue(null, XmlTags.HOST_NAME_ATTRIBUTE);
         final String eventName = xml.getAttributeValue(null, XmlTags.HOST_EVENT_ATTRIBUTE);
@@ -99,6 +112,9 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
         processedHost = new ULHost(hostName, scheme, eventName);
     }
 
+    /**
+     * Parse <path />
+     */
     private void processPathBlock(XmlPullParser xml) {
         final String url = xml.getAttributeValue(null, XmlTags.PATH_URL_TAG);
         // skip wildcard urls
@@ -114,4 +130,18 @@ public class ULConfigXmlParser  extends ConfigXmlParser {
         ULPath path = new ULPath(url, event);
         processedHost.getPaths().add(path);
     }
+
+    // endregion
+
+    // region Private API
+
+    private void resetValuesToDefaultState() {
+        hostsList = new ArrayList<ULHost>();
+        isInsideMainTag = false;
+        didParseMainBlock = false;
+        isInsideHostBlock = false;
+        processedHost = null;
+    }
+
+    // endregion
 }
