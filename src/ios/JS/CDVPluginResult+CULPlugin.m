@@ -55,7 +55,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
 
     for (CULPath *hostPath in hostPaths) {
         NSRange range = [originalPath rangeOfString:hostPath.url options:NSRegularExpressionSearch];
-        if (range.location != NSNotFound) {
+        if (range.location != NSNotFound && range.location == 0) {
             eventName = hostPath.event;
             break;
         }

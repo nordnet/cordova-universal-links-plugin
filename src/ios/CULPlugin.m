@@ -28,7 +28,7 @@
 
 //- (void)onResume:(NSNotification *)notification {
 //    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-//    [activity setWebpageURL:[NSURL URLWithString:@"http://extended.example.com/another/path/very/long?q=1&v=2#myhash"]];
+//    [activity setWebpageURL:[NSURL URLWithString:@"http://extended.example.com/my/another/path/very/long?q=1&v=2#myhash"]];
 //    
 //    [self handleUserActivity:activity];
 //}

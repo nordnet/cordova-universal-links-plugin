@@ -87,12 +87,17 @@
 }
 
 - (void)processPathTag:(NSDictionary<NSString *, NSString *> *)attributes {
+    NSString *urlPath = attributes[kCULPathUrlXmlAttribute];
+    if ([urlPath isEqualToString:@"*"] || [urlPath isEqualToString:@".*"]) { // ignore '*' paths
+        return;
+    }
+    
     NSString *event = attributes[kCULPathEventXmlAttribute];
     if (event == nil) {
         event = _processedHost.event;
     }
     
-    CULPath *path = [[CULPath alloc] initWithUrlPath:attributes[kCULPathUrlXmlAttribute] andEvent:event];
+    CULPath *path = [[CULPath alloc] initWithUrlPath:urlPath andEvent:event];
     [_processedHost addPath:path];
 }
 
