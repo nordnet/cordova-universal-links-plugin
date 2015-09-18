@@ -1,13 +1,14 @@
 //
 //  NSBundle+CULPlugin.h
-//  TestUL
 //
 //  Created by Nikolay Demyankov on 15.09.15.
-//
 //
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  Helper category to work with NSBundle.
+ */
 @interface NSBundle (CULPlugin)
 
 /**

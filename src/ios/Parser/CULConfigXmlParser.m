@@ -77,8 +77,13 @@
     }
 }
 
-#pragma mark Private API
+#pragma mark XML Processing
 
+/**
+ *  Parse host tag.
+ *
+ *  @param attributes host tag attributes
+ */
 - (void)processHostTag:(NSDictionary<NSString *, NSString *> *)attributes {
     _processedHost = [[CULHost alloc] initWithHostName:attributes[kCULHostNameXmlAttribute]
                                                 scheme:attributes[kCULHostSchemeXmlAttribute]
@@ -86,9 +91,16 @@
     _isInsideHostBlock = YES;
 }
 
+/**
+ *  Parse path tag.
+ *
+ *  @param attributes path tag attributes
+ */
 - (void)processPathTag:(NSDictionary<NSString *, NSString *> *)attributes {
     NSString *urlPath = attributes[kCULPathUrlXmlAttribute];
-    if ([urlPath isEqualToString:@"*"] || [urlPath isEqualToString:@".*"]) { // ignore '*' paths
+    
+    // ignore '*' paths; we don't need them here
+    if ([urlPath isEqualToString:@"*"] || [urlPath isEqualToString:@".*"]) {
         return;
     }
     

@@ -6,7 +6,10 @@
 
 #import "CULHost.h"
 
+// default event name
 static NSString *const DEFAULT_EVENT = @"ul_didLaunchAppFromLink";
+
+// default host scheme
 static NSString *const DEFAULT_SCHEME = @"http";
 
 @interface CULHost() {
@@ -16,14 +19,6 @@ static NSString *const DEFAULT_SCHEME = @"http";
 @end
 
 @implementation CULHost
-
-- (instancetype)initWithHostName:(NSString *)name {
-    return [self initWithHostName:name scheme:DEFAULT_SCHEME];
-}
-
-- (instancetype)initWithHostName:(NSString *)name scheme:(NSString *)scheme {
-    return [self initWithHostName:name scheme:scheme event:DEFAULT_EVENT];
-}
 
 - (instancetype)initWithHostName:(NSString *)name scheme:(NSString *)scheme event:(NSString *)event {
     self = [super init];

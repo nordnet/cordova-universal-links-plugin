@@ -20,6 +20,8 @@
 
 @implementation CULPlugin
 
+#pragma mark Public API
+
 - (void)pluginInitialize {
     [self localInit];
     
@@ -55,9 +57,16 @@
         return;
     }
     
+    // get supported hosts from the config.xml
     _supportedHosts = [CULConfigXmlParser parse];
 }
 
+/**
+ *  Find host entry that corresponds to launch url.
+ *
+ *  @param  launchURL url that launched the app
+ *  @return host entry; <code>nil</code> if none is found
+ */
 - (CULHost *)findHostByURL:(NSURL *)launchURL {
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:launchURL resolvingAgainstBaseURL:YES];
     CULHost *host = nil;
@@ -73,6 +82,12 @@
 
 #pragma mark Methods to send data to JavaScript
 
+/**
+ *  Send launch event to JS.
+ *
+ *  @param host        host that matches the launch url
+ *  @param originalUrl launch url
+ */
 - (void)sendEventToJSWithHost:(CULHost *)host originalURL:(NSURL *)originalUrl {
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithHost:host originalURL:originalUrl];
     
@@ -84,6 +99,11 @@
     [self dispatchPluginResult:pluginResult];
 }
 
+/**
+ *  Send plugin result to JS through the default callback.
+ *
+ *  @param result result to send
+ */
 - (void)dispatchPluginResult:(CDVPluginResult *)result {
     [self.commandDelegate sendPluginResult:result callbackId:_defaultCallbackId];
 }
