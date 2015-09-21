@@ -10,7 +10,7 @@ Which is:
 
   var path = require('path'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
-    pbxFile = require('xcode/lib/pbxFile'),
+    // pbxFile = require('xcode/lib/pbxFile'),
     IOS_DEPLOYMENT_TARGET = '9.0',
     COMMENT_KEY = /_comment$/,
     context;
@@ -119,18 +119,20 @@ Which is:
    * @param {String} entitlementsRelativeFilePath - relative path to entitlemets file
    */
   function createPbxFileReference(xcodeProject, entitlementsRelativeFilePath) {
-    var rootGroup = nonComments(xcodeProject.pbxGroupByName('CustomTemplate')),
-      entitlementsPbxFile = new pbxFile(entitlementsRelativeFilePath);
-
-    entitlementsPbxFile.fileRef = xcodeProject.generateUuid(),
-      entitlementsPbxFile.uuid = xcodeProject.generateUuid();
-
-    xcodeProject.addToPbxFileReferenceSection(entitlementsPbxFile);
-
-    rootGroup.children.push({
-      'value': entitlementsPbxFile.fileRef,
-      'comment': path.basename(entitlementsRelativeFilePath)
-    });
+    // commented for now
+    // var rootGroup = nonComments(xcodeProject.pbxGroupByName('CustomTemplate')),
+    //   entitlementsPbxFile = new pbxFile(entitlementsRelativeFilePath);
+    //
+    // entitlementsPbxFile.fileRef = xcodeProject.generateUuid(),
+    //   entitlementsPbxFile.uuid = xcodeProject.generateUuid();
+    //
+    // xcodeProject.addToPbxFileReferenceSection(entitlementsPbxFile);
+    //
+    // rootGroup.children.push({
+    //   'value': entitlementsPbxFile.fileRef,
+    //   'comment': path.basename(entitlementsRelativeFilePath)
+    // });
+    xcodeProject.addResourceFile(path.basename(entitlementsRelativeFilePath));
   }
 
   // region Xcode project file helpers
@@ -193,7 +195,7 @@ Which is:
       projectName = configXmlHelper.getProjectName(),
       fileName = projectName + '.entitlements';
 
-    return path.join(projectName, fileName);
+    return path.join(projectName, 'Resources', fileName);
   }
 
   // endregion

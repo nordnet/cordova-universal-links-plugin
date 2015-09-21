@@ -181,7 +181,7 @@ Script only generates content. File it self is included in the xcode project in 
    */
   function pathToEntitlementsFile() {
     if (entitlementsFilePath === undefined) {
-      entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), getProjectName() + '.entitlements');
+      entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Resources', getProjectName() + '.entitlements');
     }
 
     return entitlementsFilePath;
