@@ -28,11 +28,9 @@ It is important not only to redirect user to your app from the web, but also pro
 - [Configuring website](#configuring-website)
   - [Configuring for Android](#configuring-for-android)
   - [Configuring for iOS](#configuring-for-ios)
-
 - [How to test your application](#how-to-test-your-application)
   - [Testing on Android](#testing-on-android)
   - [Testing on iOS](#testing-on-ios)
-
 - [Links for additional documentation](#links-for-additional-documentation)
 
 ### Installation
