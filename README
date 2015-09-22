@@ -15,7 +15,7 @@ Integration process is simple:
 
 It is important not only to redirect user to your app from the web, but also provide him with the information he was looking for. For example, if he clicks on `http://mysite.com/news` and get redirected in the application - he probably hope to see the `news` page in it. Plugin will help developer with that. In `config.xml` you can specify event name that is dispatched when user opens the app from the certain link. This way, appropriate method of your web project will be called, and you can show user the requested content.
 
-**Note:** At the moment plugin doesn't support custom url schemes, but may be added later if lots of people would want that.
+**Note:** At the moment plugin doesn't support custom url schemes, but their support may be added later, if people will ask.
 
 ## Supported Platforms
 - Android 4.0.0 or above.
@@ -25,12 +25,13 @@ It is important not only to redirect user to your app from the web, but also pro
 - [Installation](#installation)
 - [Cordova config preferences](#cordova-config-preferences)
 - [Application launch handling](#application-launch-handling)
-- [Configuring website](#configuring-website)
-  - [Configuring for Android](#configuring-for-android)
-  - [Configuring for iOS](#configuring-for-ios)
-- [How to test your application](#how-to-test-your-application)
-  - [Testing on Android](#testing-on-android)
-  - [Testing on iOS](#testing-on-ios)
+- [Configuring Android application](#configuring-android-application)
+  - [Android web hooks](#android-web-hooks)
+  - [Testing UL for Android locally](#testing-ul-for-android-locally)
+- [Configuring iOS application](#configuring-ios-application)
+  - [Activating UL support in member center](#activating-ul-support-in-member-center)
+  - [Configuring apple-app-site-association file for website](#configuring-apple-app-site-association-file-for-website)
+  - [Testing iOS application](#testing-ios-application)
 - [Links for additional documentation](#links-for-additional-documentation)
 
 ### Installation
@@ -343,17 +344,17 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
 
 That's it! Now, by default for `myhost.com` links `onApplicationDidLaunchFromLink` method will be called, but for `news` section - `onNewsListPageRequested` and `onNewsDetailedPageRequested`.
 
-### Configuring website
+### Configuring Android application
 
-Universal Links integration consist of two parts:
+Deep Linking integration for Android consist of two parts:
 - Activate support on the native side.
 - Activate support on your website.
 
 First one is done by the plugin, all you have to do is just to add some event handling in JavaScript code.
 
-But in order for Universal Links to work - you need to do some modifications on your website. Plugin is aimed to help you with that task, although - that is something you'll have to do manually.
+But in order for Deep Linking fully work - you need to do some modifications on your website. Plugin is aimed to help you with that task, although - that is something you'll have to do manually.
 
-#### Configuring for Android
+#### Android web hooks
 
 If you have already tried to use `adb` to simulate application launch from the link - you probably saw chooser dialog with at least two applications in it: browser and your app. This happens because web content can be handled by multiple things. To prevent this from happening you need to activate app indexing. App indexing is the second part of deep linking, where you link that URI/URL between Google and your app. Even when users do a Google search, search results can bring them back to the app.
 
@@ -397,14 +398,8 @@ Good news is that plugin generates those tags for you. When you run `cordova bui
 
 So, instead of manually writing them down - you can take them from that file and put on the website.
 
-#### Configuring for iOS
+#### Testing UL for Android locally
 
-
-
-### How to test your application
-Testing Universal Links can be a little tricky. For Android you can easily do that from console, using `adb`. But for iOS it can be painful, if you want just to try it out. Luckily, there is a way to do that by using [branch.io](http://branch.io). Read further to get more details.
-
-#### Testing on Android
 To test Android application for Deep Linking support you just need to execute the following command in the console:
 
 ```sh
@@ -475,9 +470,6 @@ Let's create new application to play with:
   ```
 
 This way you can experiment with your Android application and check how it corresponds to different links.
-
-#### Testing on iOS
-
 
 ### Links for additional documentation
 Android:
