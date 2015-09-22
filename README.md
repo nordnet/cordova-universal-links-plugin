@@ -6,6 +6,7 @@ Plugin adds support for opening application from the browser when user clicks on
 Basically, you can have a single link that will either open your app (if it is installed) or your website (if it's not).
 
 Integration process is simple:
+
 1. Add plugin to your project.
 2. Define supported hosts and paths in Cordova's `config.xml`.
 3. Write some JavaScript code to listen for application launch by the links.
@@ -25,8 +26,8 @@ It is important not only to redirect user to your app from the web, but also pro
 - [Cordova config preferences](#cordova-config-preferences)
 - [Application launch handling](#application-launch-handling)
 - [Configuring website](#configuring-website)
-  - [Configure for Android](#configure-for-android)
-  - [Configure for iOS](#configure-for-ios)
+  - [Configuring for Android](#configuring-for-android)
+  - [Configuring for iOS](#configuring-for-ios)
 
 - [How to test your application](#how-to-test-your-application)
   - [Testing on Android](#testing-on-android)
@@ -345,10 +346,63 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
 That's it! Now, by default for `myhost.com` links `onApplicationDidLaunchFromLink` method will be called, but for `news` section - `onNewsListPageRequested` and `onNewsDetailedPageRequested`.
 
 ### Configuring website
-#### Configure for Android
-The problem is that, when you start testing this in the field, the chooser dialogue appears because the content can be handled by multiple things, including your app and browsers. The way to avoid doing that is by using app indexing. App indexing is the second part of deep linking, where you link that URI/URL between Google and your app. Even when users do a Google search, search results can bring them back to the app.
 
-#### Configure for iOS
+Universal Links integration consist of two parts:
+- Activate support on the native side.
+- Activate support on your website.
+
+First one is done by the plugin, all you have to do is just to add some event handling in JavaScript code.
+
+But in order for Universal Links to work - you need to do some modifications on your website. Plugin is aimed to help you with that task, although - that is something you'll have to do manually.
+
+#### Configuring for Android
+
+If you have already tried to use `adb` to simulate application launch from the link - you probably saw chooser dialog with at least two applications in it: browser and your app. This happens because web content can be handled by multiple things. To prevent this from happening you need to activate app indexing. App indexing is the second part of deep linking, where you link that URI/URL between Google and your app. Even when users do a Google search, search results can bring them back to the app.
+
+More details on that could be found in the [official documentation](https://developer.android.com/training/app-indexing/enabling-app-indexing.html). But long story short - you need to include proper `<link />` tags in the `<head />` section of your website.
+
+Link tag is constructed like so:
+
+```html
+<link rel="alternate"
+          href="android-app://<package_name>/<scheme>/<host><path>" />
+```
+
+- `<package_name>` - your application's package name;
+- `<scheme>` - url scheme;
+- `<host>` - hostname;
+- `<path>` - path component.
+
+For example, if your `config.xml` file looks like that:
+
+```xml
+<universal-links>
+ <host name="myhost.com">
+   <path url="/news/" />
+   <path url="/profile/" />
+ </host>
+</universal-links>
+```
+
+and a package name is `com.example.ul`, then `<head />` section on your website will be:
+
+```html
+<head>
+<link rel="alternate" href="android-app://com.example.ul/http/myhost.com/news/" />
+<link rel="alternate" href="android-app://com.example.ul/http/myhost.com/profile/" />
+
+<!-- Your other stuff from the head tag -->
+</head>
+```
+
+Good news is that plugin generates those tags for you. When you run `cordova build` (or `cordova run`) - they are placed in `ul_web_hooks/android/android_web_hook.html` file inside your Cordova's project root directory.
+
+So, instead of manually writing them down - you can take them from that file and put on the website.
+
+#### Configuring for iOS
+
+
+
 ### How to test your application
 Testing Universal Links can be a little tricky. For Android you can easily do that from console, using `adb`. But for iOS it can be painful, if you want just to try it out. Luckily, there is a way to do that by using [branch.io](http://branch.io). Read further to get more details.
 
@@ -364,6 +418,8 @@ adb shell am start
 where
 - `<URI>` - url that you want to test;
 - `<PACKAGE>` - your application's package name.
+
+**Note:** if you didn't configure your website for UL support - then most likely after executing `adb` command you will see chooser dialog with multiple applications (at least browser and your test app). This happens because you are trying to view web content, and this can be handled by several applications. Just choose your app and proceed. If you configured your website as [described above](#configuring-for-android) - then no dialog is shown and your application will be launched directly.
 
 Let's create new application to play with:
 1. Create new Cordova project and add Android platform to it:
