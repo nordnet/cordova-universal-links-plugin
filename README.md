@@ -401,15 +401,15 @@ First one you will have to do manually, but plugin will help you with the second
 
 1. Go to your [developer console](https://developers.apple.com). Click on `Certificate, Identifiers & Profiles` and then on `Identifiers`.
 
-![Developer console](docs/images/1.jpg?raw=true "Optional Title")
+  ![Developer console](docs/images/developer-console.jpg?raw=true)
 
 2. If you already have a registered App Identifier - just skip this and go to `3`. If not - create it by clicking on `+` sign, fill out `name` and `bundle ID`. `name` can be whatever you want, but `bundle ID` should be the one you defined in your Cordova's `config.xml`.
 
-[IMAGE GOES HERE]
+  ![App ID](docs/images/app-id.jpg?raw=true)
 
 3. In the `Application Services` section of your App Identifier activate `Associated Domains` and save the changes.
 
-[IMAGE GOES HERE]
+  ![App ID](docs/images/app-associated-domains.jpg?raw=true)
 
 Now your App ID is registered and has `Associated Domains` feature.
 
@@ -491,11 +491,9 @@ And the second one:
 
 Before signing those files and uploading them on your servers - you need to replace `<YOUR_TEAM_ID_FROM_MEMBER_CENTER>` with your actual team ID from the member center. You can find it in `Developer Account Summary` section on the [developer.apple.com](https://developer.apple.com/membercenter/index.action#accountSummary).
 
-[IMAGE GOES HERE]
-
 Also, it is a `Prefix` preference in the App ID description.
 
-[IMAGE GOES HERE]
+![App ID team prefix](docs/images/app-id-team-prefix.jpg?raw=true)
 
 If you already have `apple-app-site-association` file - then you need to add `applinks` block to it from the generated file.
 
