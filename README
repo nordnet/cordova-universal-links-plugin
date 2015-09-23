@@ -401,7 +401,7 @@ First one you will have to do manually, but plugin will help you with the second
 
 1. Go to your [developer console](https://developers.apple.com). Click on `Certificate, Identifiers & Profiles` and then on `Identifiers`.
 
-[IMAGE GOES HERE]
+![Developer console](docs/images/1.jpg?raw=true "Optional Title")
 
 2. If you already have a registered App Identifier - just skip this and go to `3`. If not - create it by clicking on `+` sign, fill out `name` and `bundle ID`. `name` can be whatever you want, but `bundle ID` should be the one you defined in your Cordova's `config.xml`.
 
