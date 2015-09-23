@@ -7,11 +7,12 @@ Basically, you can have a single link that will either open your app (if it is i
 
 Integration process is simple:
 
-1. Add plugin to your project.
-2. Define supported hosts and paths in Cordova's `config.xml`.
-3. Write some JavaScript code to listen for application launch by the links.
+1. Add plugin to your project (see [Installation](#installation)).
+2. Define supported hosts and paths in Cordova's `config.xml` (see [Cordova config preferences](#cordova-config-preferences)).
+3. Write some JavaScript code to listen for application launch by the links (see [Application launch handling](#application-launch-handling)).
 4. Build project from the CLI.
-5. Add web hooks to your website.
+5. Activate support for UL on your website (see [Android web integration](#android-web-integration) and [iOS web integration](#configuring-ios-application)). For iOS you will have to do some tweaks in [developer.apple.com](#activating-ul-support-in-member-center).
+6. Test it (see [Test UL for Android locally](#testing-ul-for-android-locally) and [Testing iOS application](#testing-ios-application)).
 
 It is important not only to redirect user to your app from the web, but also provide him with the information he was looking for. For example, if he clicks on `http://mysite.com/news` and get redirected in the application - he probably hope to see the `news` page in it. Plugin will help developer with that. In `config.xml` you can specify event name that is dispatched when user opens the app from the certain link. This way, appropriate method of your web project will be called, and you can show user the requested content.
 
@@ -25,13 +26,12 @@ It is important not only to redirect user to your app from the web, but also pro
 - [Installation](#installation)
 - [Cordova config preferences](#cordova-config-preferences)
 - [Application launch handling](#application-launch-handling)
-- [Configuring Android application](#configuring-android-application)
-  - [Android web hooks](#android-web-hooks)
-  - [Testing UL for Android locally](#testing-ul-for-android-locally)
-- [Configuring iOS application](#configuring-ios-application)
+- [Android web integration](#android-web-integration)
+- [iOS web integration](#ios-web-integration)
   - [Activating UL support in member center](#activating-ul-support-in-member-center)
   - [Configuring apple-app-site-association file for website](#configuring-apple-app-site-association-file-for-website)
-  - [Testing iOS application](#testing-ios-application)
+- [Testing UL for Android locally](#testing-ul-for-android-locally)
+- [Testing iOS application](#testing-ios-application)
 - [Links for additional documentation](#links-for-additional-documentation)
 
 ### Installation
@@ -176,7 +176,7 @@ function didLaunchAppFromLink(event) {
 - `params` - dictionary with query parameters; the ones that after `?` character;
 - `hash` - content after `#` character.
 
-Now it's time for some examples. In here we are gonna use Android, because it is easier to test (see [Testing on Android ](#testing-on-android) section). JavaScript side is platform independent, so all the example code below will also work for iOS.
+Now it's time for some examples. In here we are gonna use Android, because it is easier to test (see [testing for Android](#testing-ul-for-android-locally) section). JavaScript side is platform independent, so all the example code below will also work for iOS.
 
 1. Create new Cordova application and add Android platform.
 
@@ -344,17 +344,7 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
 
 That's it! Now, by default for `myhost.com` links `onApplicationDidLaunchFromLink` method will be called, but for `news` section - `onNewsListPageRequested` and `onNewsDetailedPageRequested`.
 
-### Configuring Android application
-
-Deep Linking integration for Android consist of two parts:
-- Activate support on the native side.
-- Activate support on your website.
-
-First one is done by the plugin, all you have to do is just to add some event handling in JavaScript code.
-
-But in order for Deep Linking fully work - you need to do some modifications on your website. Plugin is aimed to help you with that task, although - that is something you'll have to do manually.
-
-#### Android web hooks
+### Android web integration
 
 If you have already tried to use `adb` to simulate application launch from the link - you probably saw chooser dialog with at least two applications in it: browser and your app. This happens because web content can be handled by multiple things. To prevent this from happening you need to activate app indexing. App indexing is the second part of deep linking, where you link that URI/URL between Google and your app. Even when users do a Google search, search results can bring them back to the app.
 
@@ -398,7 +388,142 @@ Good news is that plugin generates those tags for you. When you run `cordova bui
 
 So, instead of manually writing them down - you can take them from that file and put on the website.
 
-#### Testing UL for Android locally
+### iOS web integration
+
+In the case of iOS integration of the Universal Links is a little harder. It consist of two steps:
+
+1. Register your application on [developer console](https://developers.apple.com) and enable `Associated Domains` feature for it.
+2. Generate, sign and upload `apple-app-site-association` file on your website (if you don't have it yet).
+
+First one you will have to do manually, but plugin will help you with the second step.
+
+#### Activating UL support in member center
+
+1. Go to your [developer console](https://developers.apple.com). Click on `Certificate, Identifiers & Profiles` and then on `Identifiers`.
+
+[IMAGE GOES HERE]
+
+2. If you already have a registered App Identifier - just skip this and go to `3`. If not - create it by clicking on `+` sign, fill out `name` and `bundle ID`. `name` can be whatever you want, but `bundle ID` should be the one you defined in your Cordova's `config.xml`.
+
+[IMAGE GOES HERE]
+
+3. In the `Application Services` section of your App Identifier activate `Associated Domains` and save the changes.
+
+[IMAGE GOES HERE]
+
+Now your App ID is registered and has `Associated Domains` feature.
+
+#### Configuring apple-app-site-association file for website
+
+In order for Universal Links to work - you need to associate your application with the certain domain. For that you need to:
+
+1. Get SSL certification for your domain name.
+2. Create `apple-app-site-association` file, containing your App ID and paths you want to handle.
+3. Sign it with SSL certificate.
+4. Upload `apple-app-site-association` file in the root of your website.
+
+##### Step 1
+
+We are not gonna describe stuff regarding certificate acquiring. You can find lots of information about that on the Internet. For example, you can do as described [here](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9):
+
+1. Visit [https://www.digicert.com/easy-csr/openssl.htm](https://www.digicert.com/easy-csr/openssl.htm) and fill out the form at the top to generate an openSSL command. Keep this window open.
+2. Login to your remote server.
+3. Execute the openSSL command to generate a certificate signing request (.csr) and certification file (.cert).
+4. Pay for your SSL certification at [https://www.digicert.com/welcome/ssl-plus.htm](https://www.digicert.com/welcome/ssl-plus.htm).
+5. Wait for Digicert to approve and send you the final files.
+6. In the end, move `yourdomain.com.cert`, `yourdomain.com.key` and `digicertintermediate.cert` into the same directory on your remote server.
+
+##### Step 2
+
+When you run `cordova build` (or `cordova run`) - plugin takes data from `config.xml` and generates `apple-app-site-association` files for each host you defined. Files are placed in the `ul_web_hooks/ios/` folder of your Cordova project under the names `<hostname>#apple-app-site-association`.
+
+For example, let's say your application's bundle ID is `com.example.ul`, and `config.xml` has several hosts:
+
+```xml
+<universal-links>
+  <host name="firsthost.com">
+    <path url="/some/path/*" />
+  </host>
+  <host name="secondhost.com" />
+</universal-links>
+```
+
+Run `cordova build` and then go to `ul_web_hooks/ios/` folder in your Cordova project. You will see there two files:
+
+```
+firsthost.com#apple-app-site-association
+secondhost.com#apple-app-site-association
+```
+
+Content of the first one is:
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "<YOUR_TEAM_ID_FROM_MEMBER_CENTER>.com.example.ul",
+        "paths": [
+          "/some/path/*"
+        ]
+      }
+    ]
+  }
+}
+```
+
+And the second one:
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "<YOUR_TEAM_ID_FROM_MEMBER_CENTER>.com.example.ul",
+        "paths": [
+          "*"
+        ]
+      }
+    ]
+  }
+}
+```
+
+Before signing those files and uploading them on your servers - you need to replace `<YOUR_TEAM_ID_FROM_MEMBER_CENTER>` with your actual team ID from the member center. You can find it in `Developer Account Summary` section on the [developer.apple.com](https://developer.apple.com/membercenter/index.action#accountSummary).
+
+[IMAGE GOES HERE]
+
+Also, it is a `Prefix` preference in the App ID description.
+
+[IMAGE GOES HERE]
+
+If you already have `apple-app-site-association` file - then you need to add `applinks` block to it from the generated file.
+
+##### Step 3
+
+Again, you can find on the Internet lots of information regarding singing file with SSL certificate.
+
+Continuing previous example, you can do it like that:
+
+```
+cat firsthost.com#apple-app-site-association | openssl smime -sign -inkey firsthost.com.key
+                                                -signer firsthost.com.cert
+                                                -certfile intermediate.cert
+                                                -noattr -nodetach
+                                                -outform DER > apple-app-site-association
+```
+
+Signed `apple-app-site-association` file you now should upload to your server.
+
+##### Step 4
+
+Just upload that file in the root of your domain. One important thing: it should be downloadable from the direct link. For example, `https://firsthost.com/apple-app-site-association`.
+
+**No redirects!** When application is launched - it downloads it from that link, so if it can't find it - Universal Links are not gonna work.
+
+That's it, you have finished configuring iOS for UL support.
+
+### Testing UL for Android locally
 
 To test Android application for Deep Linking support you just need to execute the following command in the console:
 
@@ -471,6 +596,10 @@ Let's create new application to play with:
 
 This way you can experiment with your Android application and check how it corresponds to different links.
 
+### Testing iOS application
+
+
+
 ### Links for additional documentation
 Android:
 - [Enable Deep Linking on Android](https://developer.android.com/training/app-indexing/deep-linking.html)
@@ -479,5 +608,6 @@ Android:
 
 iOS:
 - [Apple documentation on Universal Links](https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html)
+- [Apple documentation on apple-app-site-association file](https://developer.apple.com/library/ios/documentation/Security/Reference/SharedWebCredentialsRef/index.html)
 - [How to setup universal links on iOS 9](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9)
 - [Branch.io documentation on universal links](https://dev.branch.io/recipes/branch_universal_links/#enable-universal-links-on-the-branch-dashboard)
