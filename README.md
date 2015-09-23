@@ -596,15 +596,71 @@ This way you can experiment with your Android application and check how it corre
 
 ### Testing iOS application
 
+Unlike Android, Apple doesn't provide any tools to test Universal Links. So you have to do all the [integration stuff](#ios-web-integration) before any real testing. So please, do that.
 
+But if you don't want to... well, there is one way to skip it. You can use [branch.io](https://branch.io) to handle all the SSL/apple-app-site-association stuff for you. How to do that - described in their [documentation](https://dev.branch.io/recipes/branch_universal_links/#enable-universal-links-on-the-branch-dashboard). From there you can skip Xcode and SDK integration stuff, because you don't need that.
+
+Let's break it on steps:
+
+1. Go to developer console and register your App ID, as described in [Activating UL support in member center](#activating-ul-support-in-member-center).
+
+2. Register account on [branch.io](https://dashboard.branch.io/), if you don't have it yet.
+
+3. Login into [branch dashboard](https://dashboard.branch.io/). Go to `Settings` -> `Link Settings`, activate `Enable Universal Links` and fill in `Bundle identifier` and `Team ID` fields.
+
+  ![App ID](docs/images/branch-io.jpg?raw=true)
+
+4. It will take some time to update their servers, so be patient. To check if it is ready - just open [https://bnc.lt/apple-app-site-association](https://bnc.lt/apple-app-site-association) and search for your `Bundle identifier`.
+
+  Pay attention for `paths` - if there is any for your app, then write it down.
+
+  For example:
+  ```json
+  ...,"9F38WJR2U8.com.example.ul":{"paths":["/a2Be/*"]},...
+  ```
+
+5. Create new Cordova iOS application and add UL plugin:
+
+  ```sh
+  cordova create TestProject com.example.ul TestProject
+  cd ./TestProject
+  cordova platform add ios
+  cordova plugin add cordova-universal-links-plugin
+  ```
+
+6. Add `bnc.lt` and your other hosts into `config.xml`:
+
+  ```xml
+  <universal-links>
+    <host name="bnc.lt" />
+    <host name="yourdomain.com" />
+  </universal-links>
+  ```
+
+  For test purpose you can leave only `bnc.lt` in there. But if you specifying your hosts - you need to [white label](https://dev.branch.io/recipes/branch_universal_links/#white-label-domains) them.
+
+7. Attach your real device to the computer and run application on it:
+
+  ```sh
+  cordova run ios
+  ```
+
+  Emulator would not work.
+
+8. Email yourself a link that need's to be tested.
+
+  For example, `https://bnc.lt/a2Be/somepage.html`. As you can see, link constructed from hostname and path component, specified in `apple-app-site-association` file.
+
+  As a result - application should be launched. If not - check all the steps above. Also, check your provisioning profiles in Xcode.
 
 ### Links for additional documentation
-Android:
+
+**Android:**
 - [Enable Deep Linking on Android](https://developer.android.com/training/app-indexing/deep-linking.html)
 - [Specifying App Content for Indexing](https://developer.android.com/training/app-indexing/enabling-app-indexing.html)
 - [Video tutorial on Android App Indexing](https://realm.io/news/juan-gomez-android-app-indexing/)
 
-iOS:
+**iOS:**
 - [Apple documentation on Universal Links](https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html)
 - [Apple documentation on apple-app-site-association file](https://developer.apple.com/library/ios/documentation/Security/Reference/SharedWebCredentialsRef/index.html)
 - [How to setup universal links on iOS 9](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9)
