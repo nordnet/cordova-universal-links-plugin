@@ -606,7 +606,7 @@ Let's break it on steps:
 
 2. Register account on [branch.io](https://dashboard.branch.io/), if you don't have it yet.
 
-3. Login into [branch dashboard](https://dashboard.branch.io/). Go to `Settings` -> `Link Settings`, activate `Enable Universal Links` and fill in `Bundle identifier` and `Team ID` fields.
+3. Login into [branch dashboard](https://dashboard.branch.io/). Go to `Settings` -> `Link Settings`, activate `Enable Universal Links`, fill in `Bundle identifier` and `Team ID`.
 
   ![App ID](docs/images/branch-io.jpg?raw=true)
 
