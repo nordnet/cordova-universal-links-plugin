@@ -7,7 +7,7 @@ Basically, you can have a single link that will either open your app or your web
 
 Integration process is simple:
 
-1. Add then plugin to your project (see [Installation](#installation)).
+1. Add the plugin to your project (see [Installation](#installation)).
 2. Define supported hosts and paths in Cordova's `config.xml` (see [Cordova config preferences](#cordova-config-preferences)).
 3. Write some JavaScript code to listen for application launch by the links (see [Application launch handling](#application-launch-handling)).
 4. Build project from the CLI.
