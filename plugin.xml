@@ -3,19 +3,20 @@
 <plugin id="cordova-universal-links-plugin" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
 
   <name>Universal Links Plugin</name>
-  <description>Cordova plugin support Universal Links. Basically, open application through the link in the browser.</description>
+  <description>
+    Cordova plugin to add in your application support for Universal Links (iOS 9) and Deep Links (Android).
+    Basically, open application through the link in the browser.
+  </description>
   <license>Apache 2.0</license>
   <keywords>cordova,links,universal</keywords>
 
-  <repo></repo>
-  <issue></issue>
+  <repo>https://github.com/nordnet/cordova-universal-links-plugin</repo>
+  <issue>https://github.com/nordnet/cordova-universal-links-plugin/issues</issue>
 
   <engines>
     <engine name="cordova-ios" version=">=3.8"></engine>
     <engine name="cordova-android" version=">=4"></engine>
   </engines>
-
-<!-- adb shell am start -W -a android.intent.action.VIEW -d "http://extended.example.com/another/path/my/page?param=1#has" com.example.ul -->
 
 <!-- JavaScrip Library Sources -->
   <js-module name="universalLinks" src="www/universal_links.js">
