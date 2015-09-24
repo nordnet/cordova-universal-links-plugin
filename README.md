@@ -1,22 +1,22 @@
 # Cordova Universal Links Plugin
-This Cordova plugin adds support for opening application from the browser when user clicks on the link. Better known as:
+This Cordova plugin adds support for opening an application from the browser when user clicks on the link. Better known as:
 - [Universal Links on iOS](https://developer.apple.com/library/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html)
 - [Deep Linking on Android](https://developer.android.com/training/app-indexing/deep-linking.html)
 
-Basically, you can have a single link that will either open your app (if it is installed) or your website (if it's not).
+Basically, you can have a single link that will either open your app or your website, if the app isn't installed.
 
 Integration process is simple:
 
-1. Add plugin to your project (see [Installation](#installation)).
+1. Add then plugin to your project (see [Installation](#installation)).
 2. Define supported hosts and paths in Cordova's `config.xml` (see [Cordova config preferences](#cordova-config-preferences)).
 3. Write some JavaScript code to listen for application launch by the links (see [Application launch handling](#application-launch-handling)).
 4. Build project from the CLI.
 5. Activate support for UL on your website (see [Android web integration](#android-web-integration) and [iOS web integration](#configuring-ios-application)).
 6. Test it (see [Test UL for Android locally](#testing-ul-for-android-locally) and [Testing iOS application](#testing-ios-application)).
 
-It is important not only to redirect user to your app from the web, but also provide him with the information he was looking for. For example, if he clicks on `http://mysite.com/news` and get redirected in the application - he probably hope to see the `news` page in it. Plugin will help developer with that. In `config.xml` you can specify event name that is dispatched when user opens the app from the certain link. This way, appropriate method of your web project will be called, and you can show to user the requested content.
+It is important not only to redirect users to your app from the web, but also provide them with the information they were looking for. For example, if someone clicks on `http://mysite.com/news` and get redirected in the app - they are probably hoping to see the `news` page in it. The plugin will help developers with that. In `config.xml` you can specify an event name that is dispatched when user opens the app from the certain link. This way, the appropriate method of your web project will be called, and you can show to user the requested content.
 
-**Note:** At the moment plugin doesn't support custom url schemes, but they can be added later, if people will ask.
+**Note:** At the moment the plugin doesn't support custom url schemes, but they can be added later.
 
 ## Supported Platforms
 - Android 4.0.0 or above.
@@ -140,7 +140,7 @@ is the same as:
 ```
 
 ### Application launch handling
-As we have already mentioned - it is not enough just to redirect user into your app, you need to show him content that he was looking for. In order to help you with that - plugin will send appropriate event with url data to the JavaScript side. By default, event name is `ul_didLaunchAppFromLink`, but you can specify any name for any host/path combination by using `event` attribute.
+As mentioned - it is not enough just to redirect a user into your app, you will also need to display the correct content. In order to help you with that - the plugin will send the appropriate event with url data to the JavaScript side. By default, event name is `ul_didLaunchAppFromLink`, but you can specify any name for any host/path combination by using `event` attribute.
 
 To subscribe for default UL event in JavaScript - use `document.addEventListener` like so:
 
@@ -224,12 +224,12 @@ Now it's time for some examples. In here we are gonna use Android, because it is
 
     // deviceready Event Handler
     onDeviceReady: function() {
-      console.log('Handle deviceready event if you need.');
+      console.log('Handle deviceready event if needed.');
     },
 
     // openNewsListPage Event Handler
     onNewsListPageRequested: function(event) {
-      console.log('Showing to user list of awesome news.');
+      console.log('Showing list of awesome news.');
 
       // do some work to show list of news
     },
@@ -246,7 +246,7 @@ Now it's time for some examples. In here we are gonna use Android, because it is
   app.initialize();
   ```
 
-  Now, if user clicks on `http://myhost.com/news/` link - method `onNewsListPageRequested` will be called, and for every link like `http://myhost.com/news/*` - `onNewsDetailedPageRequested`. Basically, we created a mapping between the links and JavaScript methods.
+  Now, if the user clicks on `http://myhost.com/news/` link - method `onNewsListPageRequested` will be called, and for every link like `http://myhost.com/news/*` - `onNewsDetailedPageRequested`. Basically, we created a mapping between the links and JavaScript methods.
 
 5. Build and run your application:
 
@@ -384,7 +384,7 @@ and a package name is `com.example.ul`, then `<head />` section on your website 
 </head>
 ```
 
-Good news is that **plugin generates those tags for you**. When you run `cordova build` (or `cordova run`) - they are placed in `ul_web_hooks/android/android_web_hook.html` file inside your Cordova's project root directory.
+Good news is that **plugin generates those tags for you**. When you run `cordova build` (or `cordova run`) - they are placed in `ul_web_hooks/android/android_web_hook.html` file inside your Cordova project root directory.
 
 So, instead of manually writing them down - you can take them from that file and put on the website.
 
@@ -402,7 +402,7 @@ where
 - `<URI>` - url that you want to test;
 - `<PACKAGE>` - your application's package name.
 
-**Note:** if you didn't configure your website for UL support - then most likely after executing `adb` command you will see chooser dialog with multiple applications (at least browser and your test app). This happens because you are trying to view web content, and this can be handled by several applications. Just choose your app and proceed. If you configured your website as [described above](#configuring-for-android) - then no dialog is shown and your application will be launched directly.
+**Note:** if you didn't configure your website for UL support - then most likely after executing the `adb` command you will see a chooser dialog with multiple applications (at least browser and your test app). This happens because you are trying to view web content, and this can be handled by several applications. Just choose your app and proceed. If you configured your website as [described above](#configuring-for-android) - then no dialog is shown and your application will be launched directly.
 
 Let's create new application to play with:
 1. Create new Cordova project and add Android platform to it:
@@ -497,14 +497,7 @@ In order for Universal Links to work - you need to associate your application wi
 
 ##### Step 1
 
-We are not gonna describe stuff regarding certificate acquiring. You can find lots of information about that on the Internet. For example, you can do as described [here](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9):
-
-1. Visit [https://www.digicert.com/easy-csr/openssl.htm](https://www.digicert.com/easy-csr/openssl.htm) and fill out the form at the top to generate an openSSL command. Keep this window open.
-2. Login to your remote server.
-3. Execute the openSSL command to generate a certificate signing request (.csr) and certification file (.cert).
-4. Pay for your SSL certification at [https://www.digicert.com/welcome/ssl-plus.htm](https://www.digicert.com/welcome/ssl-plus.htm).
-5. Wait for Digicert to approve and send you the final files.
-6. In the end, move `yourdomain.com.cert`, `yourdomain.com.key` and `digicertintermediate.cert` into the same directory on your remote server.
+We are not gonna describe stuff regarding certificate acquiring. You can find lots of information about that on the Internet. For example, you can do as described [here](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9).
 
 ##### Step 2
 
@@ -575,7 +568,7 @@ If you already have `apple-app-site-association` file - then you need to add `ap
 
 ##### Step 3
 
-Again, you can find on the Internet lots of information regarding singing file with SSL certificate.
+Again, you can find lots of information on the Internet regarding singing file with SSL certificate.
 
 Continuing previous example, you can do it like that:
 
@@ -648,7 +641,7 @@ Step-by-step guide:
   cordova run ios
   ```
 
-  Emulator would not work.
+  Emulator will not work.
 
 8. Email yourself a link that need's to be tested.
 
