@@ -4,9 +4,33 @@ It will check all necessary module dependencies and install the missing ones loc
 */
 
 var exec = require('child_process').exec,
-  modules = ['xml2js', 'mkpath', 'rimraf', 'xcode'];
+    path = require('path'),
+    cwd = path.resolve(),
+    modules = ['read-package-json'];
 
 // region NPM specific
+
+/**
+ * Discovers module dependencies in plugin's package.json and installs those modules.
+ * @param {String} pluginId - ID of the plugin calling this hook
+ */
+function getPackagesFromJson(pluginId){
+  var readJson = require('read-package-json');
+  readJson(path.join(cwd, 'plugins', pluginId, 'package.json'), console.error, false, function (er, data) {
+    if (er) {
+      console.error("There was an error reading the file: "+er);
+      return;
+    }
+    if(data['dependencies']){
+      for(var k in data['dependencies']){
+        modules.push(k);
+      }
+      installRequiredNodeModules(function(){
+        console.log('All dependency modules are installed.');
+      });
+    }
+  });
+}
 
 /**
  * Check if node package is installed.
@@ -49,9 +73,9 @@ function installNodeModule(moduleName, callback) {
 /**
  * Install all required node packages.
  */
-function installRequiredNodeModules() {
+function installRequiredNodeModules(callback) {
   if (modules.length == 0) {
-    console.log('All dependency modules are installed.');
+    callback();
     return;
   }
 
@@ -63,7 +87,7 @@ function installRequiredNodeModules() {
       return;
     } else {
       console.log('Module ' + moduleName + ' is installed');
-      installRequiredNodeModules();
+      installRequiredNodeModules(callback);
     }
   });
 }
@@ -71,5 +95,5 @@ function installRequiredNodeModules() {
 // endregion
 
 module.exports = function(ctx) {
-  installRequiredNodeModules();
+  installRequiredNodeModules(getPackagesFromJson.bind(this, ctx.opts.plugin.id));
 };
