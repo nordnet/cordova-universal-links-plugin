@@ -38,8 +38,7 @@
   "dependencies": {
     "mkpath": ">=0.1",
     "xml2js": ">=0.4",
-    "rimraf": ">=2.4",
-    "xcode": ">=0.8"
+    "rimraf": ">=2.4"
   },
   "author": "Nikolay Demyankov for Nordnet Bank AB",
   "license": "MIT",
