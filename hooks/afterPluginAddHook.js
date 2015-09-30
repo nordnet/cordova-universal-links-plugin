@@ -4,28 +4,29 @@ It will check all necessary module dependencies and install the missing ones loc
 */
 
 var exec = require('child_process').exec,
-    path = require('path'),
-    cwd = path.resolve(),
-    modules = ['read-package-json'];
+  path = require('path'),
+  modules = ['read-package-json'],
+  packageJsonFilePath;
 
 // region NPM specific
 
 /**
- * Discovers module dependencies in plugin's package.json and installs those modules.
- * @param {String} pluginId - ID of the plugin calling this hook
+ * Discovers module dependencies in plugin's package.json and installs them.
  */
-function getPackagesFromJson(pluginId){
+function getPackagesFromJson() {
   var readJson = require('read-package-json');
-  readJson(path.join(cwd, 'plugins', pluginId, 'package.json'), console.error, false, function (er, data) {
-    if (er) {
-      console.error("There was an error reading the file: "+er);
+  readJson(packageJsonFilePath, console.error, false, function(err, data) {
+    if (err) {
+      console.error('Can\'t read package.json file: ' + err);
       return;
     }
-    if(data['dependencies']){
-      for(var k in data['dependencies']){
-        modules.push(k);
+
+    var dependencies = data['dependencies'];
+    if (dependencies) {
+      for (var module in dependencies) {
+        modules.push(module);
       }
-      installRequiredNodeModules(function(){
+      installRequiredNodeModules(function() {
         console.log('All dependency modules are installed.');
       });
     }
@@ -85,15 +86,26 @@ function installRequiredNodeModules(callback) {
       console.log('Failed to install module ' + moduleName);
       console.log(err);
       return;
-    } else {
-      console.log('Module ' + moduleName + ' is installed');
-      installRequiredNodeModules(callback);
     }
+
+    console.log('Module ' + moduleName + ' is installed');
+    installRequiredNodeModules(callback);
   });
 }
 
 // endregion
 
+/**
+ * Perform initialization before any execution.
+ *
+ * @param {Object} ctx - cordova context object
+ */
+function init(ctx) {
+  packageJsonFilePath = path.join(ctx.opts.projectRoot, 'plugins', ctx.opts.plugin.id, 'package.json');
+}
+
 module.exports = function(ctx) {
-  installRequiredNodeModules(getPackagesFromJson.bind(this, ctx.opts.plugin.id));
+  init(ctx);
+
+  installRequiredNodeModules(getPackagesFromJson);
 };
