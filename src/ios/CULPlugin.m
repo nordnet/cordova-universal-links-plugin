@@ -71,7 +71,7 @@
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:launchURL resolvingAgainstBaseURL:YES];
     CULHost *host = nil;
     for (CULHost *supportedHost in _supportedHosts) {
-        if ([supportedHost.name isEqualToString:urlComponents.host] && [supportedHost.scheme isEqualToString:urlComponents.scheme]) {
+        if ([supportedHost.name isEqualToString:urlComponents.host]) {
             host = supportedHost;
             break;
         }
