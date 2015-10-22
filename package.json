@@ -1,6 +1,6 @@
 {
   "name": "cordova-universal-links-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cordova plugin to add in your application support for Universal Links (iOS 9) and Deep Links (Android). Basically, open application through the link in the browser.",
   "cordova": {
     "id": "cordova-universal-links-plugin",
