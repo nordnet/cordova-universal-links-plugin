@@ -32,6 +32,7 @@ It is important not only to redirect users to your app from the web, but also pr
   - [Activating UL support in member center](#activating-ul-support-in-member-center)
   - [Configuring apple-app-site-association file for website](#configuring-apple-app-site-association-file-for-website)
 - [Testing iOS application](#testing-ios-application)
+- [Useful notes on Universal Links for iOS](#useful-notes-on-universal-links-for-ios)
 - [Additional documentation links](#additional-documentation-links)
 
 ### Installation
@@ -648,6 +649,24 @@ Step-by-step guide:
   For example, `https://bnc.lt/a2Be/somepage.html`. As you can see, link constructed from hostname and path component, specified in `apple-app-site-association` file. This link may not even lead to the real page, it doesn't matter. It's only purpose is to open the app.
 
   Now click on your link. Application should be launched. If not - check all the steps above. Also, check your provisioning profiles in Xcode.
+
+### Useful notes on Universal Links for iOS
+
+First of all, you need to understand how the Universal Links works. When user clicks on the link - Safari checks, if any of the installed apps can handle it. If app is found - Safari starts it, if not - link opened as usually in the browser.
+
+Now, let's assume you have a following setup in `config.xml`:
+```xml
+<universal-links>
+  <host name="mywebsite.com">
+    <path url="/some/page.html" />
+  </host>
+</universal-links>
+```
+By this we state, that our app should handle `http://mywebsite.com/some/page.html` link. So, if user clicks on `http://mywebsite.com` - application would not launch. And this is totally as you want it to be. Now comes the interesting part: if user opens `http://mywebsite.com` in the Safari and then presses on `http://mywebsite.com/some/page.html` link - application is not gonna start, he will stay in the browser. And at the top of that page he will see a Smart Banner. To launch the application user will have to click on that banner. And this is a normal behaviour from iOS. If user already viewing your website in the browser - he doesn't want to leave it, when he clicks on some link, that leads on the page inside your site. But if he clicks on the `http://mywebsite.com/some/page.html` link from some other source - then it will start your application.
+
+Another thing that every developer should be aware of:
+
+When a user is in an app, opened by Universal Links - a return to browser option will persist at the top of the screen (i.e. `mywebsite.com`). Users who have clicked the `mywebsite.com` option will be taken to their Safari browser, and Smart Banner is persistently rendered on the top of the window. This banner has an `OPEN` call to action. For all future clicks of URLs, associated with this app via Universal Links, the app will never be launched again for the user, and the user will continue being redirected to the Safari page with the banner. If the user clicks `OPEN` - then the app will be launched, and all future clicks of the URL will deep linking the user to the app.
 
 ### Additional documentation links
 
