@@ -486,14 +486,14 @@ This way you can experiment with your Android application and check how it corre
 
 In the case of iOS integration of the Universal Links is a little harder. It consist of two steps:
 
-1. Register your application on [developer console](https://developers.apple.com) and enable `Associated Domains` feature.
+1. Register your application on [developer console](https://developer.apple.com) and enable `Associated Domains` feature.
 2. Generate, sign and upload `apple-app-site-association` file on your website (if you don't have it yet).
 
 First one you will have to do manually, but plugin will help you with the second step.
 
 #### Activate UL support in member center
 
-1. Go to your [developer console](https://developers.apple.com). Click on `Certificate, Identifiers & Profiles` and then on `Identifiers`.
+1. Go to your [developer console](https://developer.apple.com). Click on `Certificate, Identifiers & Profiles` and then on `Identifiers`.
 
   ![Developer console](docs/images/developer-console.jpg?raw=true)
 
