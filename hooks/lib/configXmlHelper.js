@@ -85,7 +85,15 @@ Helper class to read data from config.xml file.
    * @return {Object}
    */
   function getCordovaConfigParser(configFilePath) {
-    var ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser');
+    var ConfigParser;
+
+    // If we are running Cordova 5.4 or abova - use parser from cordova-common.
+    // Otherwise - from cordova-lib.
+    try {
+      ConfigParser = context.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+    } catch (e) {
+      ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser')
+    }
 
     return new ConfigParser(configFilePath);
   }
