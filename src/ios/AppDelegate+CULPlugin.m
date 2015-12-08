@@ -18,12 +18,15 @@ static NSString *const PLUGIN_NAME = @"UniversalLinks";
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler {
     // ignore activities that are not for Universal Links
-    if (![userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+    if (![userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb] || userActivity.webpageURL == nil) {
         return NO;
     }
     
     // get instance of the plugin and let it handle the userActivity object
     CULPlugin *plugin = [self.viewController getCommandInstance:PLUGIN_NAME];
+    if (plugin == nil) {
+        return NO;
+    }
     
     return [plugin handleUserActivity:userActivity];
 }
