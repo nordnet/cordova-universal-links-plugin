@@ -27,8 +27,14 @@ function run(cordovaContext) {
   var pluginPreferences = configParser.readPreferences(cordovaContext),
     platformsList = cordovaContext.opts.platforms;
 
-  // if no preferences are found - exist
+  // if no preferences are found - exit
   if (pluginPreferences == null) {
+    return;
+  }
+
+  // if no host is defined - exit
+  if (pluginPreferences.hosts == null || pluginPreferences.hosts.length == 0) {
+    console.warn('No host is specified in the config.xml. Universal Links plugin is not going to work.');
     return;
   }
 

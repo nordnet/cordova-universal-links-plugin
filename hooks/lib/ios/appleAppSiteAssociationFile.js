@@ -7,7 +7,7 @@ Files are created with the following name:
 hostname#apple-app-site-association
 
 Prefix 'hostname#' describes on which host this file should be placed. Don't forget to remove it before uploading file on your host.
-Also, in the file you need to replace <YOUR_TEAM_ID_FROM_MEMBER_CENTER> with the real team id from the member center.
+Also, in the file you need to replace <YOUR_TEAM_ID_FROM_MEMBER_CENTER> with the real team id from the member center, if <ios-team-id> preference was not set in projects config.xml.
 
 In order to activate support for Universal Links on iOS you need to sign them with the valid SSL certificate and place in the root of your domain.
 
@@ -23,8 +23,8 @@ Additional documentation regarding apple-app-site-association file can be found 
     fs = require('fs'),
     rimraf = require('rimraf'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
+    IOS_TEAM_ID = '<YOUR_TEAM_ID_FROM_MEMBER_CENTER>',
     ASSOCIATION_FILE_NAME = 'apple-app-site-association',
-    APP_ID_PREFIX = '<YOUR_TEAM_ID_FROM_MEMBER_CENTER>',
     bundleId,
     context;
 
@@ -63,8 +63,13 @@ Additional documentation regarding apple-app-site-association file can be found 
    * @param {Object} pluginPreferences - list of hosts from config.xml
    */
   function createNewAssociationFiles(pluginPreferences) {
-    pluginPreferences.forEach(function(host) {
-      var content = generateFileContentForHost(host);
+    var teamId = pluginPreferences.iosTeamId;
+    if (!teamId) {
+      teamId = IOS_TEAM_ID;
+    }
+
+    pluginPreferences.hosts.forEach(function(host) {
+      var content = generateFileContentForHost(host, teamId);
       saveContentToFile(host.name, content);
     });
   }
@@ -75,8 +80,8 @@ Additional documentation regarding apple-app-site-association file can be found 
    * @param {Object} host - host information
    * @return {Object} content of the file as JSON object
    */
-  function generateFileContentForHost(host) {
-    var appID = APP_ID_PREFIX + '.' + getBundleId();
+  function generateFileContentForHost(host, teamId) {
+    var appID = teamId + '.' + getBundleId();
 
     return {
       "applinks": {

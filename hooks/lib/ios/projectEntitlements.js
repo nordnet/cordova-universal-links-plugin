@@ -113,7 +113,7 @@ Script only generates content. File it self is included in the xcode project in 
       link;
 
     // generate list of host links
-    pluginPreferences.forEach(function(host) {
+    pluginPreferences.hosts.forEach(function(host) {
       link = domainsListEntryForHost(host);
       domainsList.push(link);
     });

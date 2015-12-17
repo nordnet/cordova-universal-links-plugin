@@ -84,7 +84,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
     var linkTpl = LINK_TEMPLATE.replace('<package_name>', packageName),
       content = '';
 
-    pluginPreferences.forEach(function(host) {
+    pluginPreferences.hosts.forEach(function(host) {
       host.paths.forEach(function(hostPath) {
         content += generateLinkTag(linkTpl, host.scheme, host.name, hostPath) + '\n';
       });

@@ -36,20 +36,31 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
       return null;
     }
 
-    // look for defined hosts
-    var xmlHostList = ulXmlPreferences[0]['host'];
-    if (xmlHostList == null || xmlHostList.length == 0) {
-      console.warn('No host is specified in the config.xml. Universal Links plugin is not going to work.');
-      return null;
-    }
+    var xmlPreferences = ulXmlPreferences[0];
 
-    // parse xml data
-    return constructHostsList(xmlHostList);
+    // read hosts
+    var hosts = constructHostsList(xmlPreferences);
+
+    // read ios team ID
+    var iosTeamId = getTeamIdPreference(xmlPreferences);
+
+    return {
+      'hosts': hosts,
+      'iosTeamId': iosTeamId
+    };
   }
 
   // endregion
 
   // region Private API
+
+  function getTeamIdPreference(xmlPreferences) {
+    if (xmlPreferences.hasOwnProperty('ios-team-id')) {
+      return xmlPreferences['ios-team-id'][0]['$']['value'];
+    }
+
+    return null;
+  }
 
   /**
    * Construct list of host objects, defined in xml file.
@@ -60,7 +71,13 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
   function constructHostsList(xmlPreferences) {
     var hostsList = [];
 
-    xmlPreferences.forEach(function(xmlElement) {
+    // look for defined hosts
+    var xmlHostList = xmlPreferences['host'];
+    if (xmlHostList == null || xmlHostList.length == 0) {
+      return [];
+    }
+
+    xmlHostList.forEach(function(xmlElement) {
       var host = constructHostEntry(xmlElement);
       if (host) {
         hostsList.push(host);
