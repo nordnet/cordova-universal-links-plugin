@@ -40,7 +40,7 @@
  *
  *  @param name   host name
  *  @param scheme scheme; if <code>nil</code> - http will be used
- *  @param event  event name; if <code>nil</code> - ul_didLaunchAppFromLink event name will be used
+ *  @param event  event name; if <code>nil</code> - didLaunchAppFromLink event name will be used
  *
  *  @return instance of the CULHost
  */

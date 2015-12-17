@@ -9,11 +9,12 @@
 #import "CULPath.h"
 #import "CULHost.h"
 #import "CDVPluginResult+CULPlugin.h"
+#import "CDVInvokedUrlCommand+CULPlugin.h"
 
 @interface CULPlugin() {
-    NSString *_defaultCallbackId;
     NSArray *_supportedHosts;
-    CDVPluginResult *_storedMessage;
+    CDVPluginResult *_storedEvent;
+    NSMutableDictionary<NSString *, NSString *> *_subscribers;
 }
 
 @end
@@ -24,17 +25,7 @@
 
 - (void)pluginInitialize {
     [self localInit];
-    
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
-
-//- (void)onResume:(NSNotification *)notification {
-//    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-//    [activity setWebpageURL:[NSURL URLWithString:@"http://extended.example.com/my/another/path/very/long?q=1&v=2#myhash"]];
-//    
-//    [self handleUserActivity:activity];
-//}
-
 
 - (BOOL)handleUserActivity:(NSUserActivity *)userActivity {
     [self localInit];
@@ -45,9 +36,17 @@
         return NO;
     }
     
-    [self sendEventToJSWithHost:host originalURL:launchURL];
+    [self storeEventWithHost:host originalURL:launchURL];
     
     return YES;
+}
+
+- (void)onAppTerminate {
+    _supportedHosts = nil;
+    _subscribers = nil;
+    _storedEvent = nil;
+    
+    [super onAppTerminate];
 }
 
 #pragma mark Private API
@@ -57,8 +56,22 @@
         return;
     }
     
+    _subscribers = [[NSMutableDictionary alloc] init];
+    
     // get supported hosts from the config.xml
     _supportedHosts = [CULConfigXmlParser parse];
+}
+
+/**
+ *  Store event data for future use.
+ *  If we are resuming the app - try to consume it.
+ *
+ *  @param host        host that matches the launch url
+ *  @param originalUrl launch url
+ */
+- (void)storeEventWithHost:(CULHost *)host originalURL:(NSURL *)originalUrl {
+    _storedEvent = [CDVPluginResult resultWithHost:host originalURL:originalUrl];
+    [self tryToConsumeEvent];
 }
 
 /**
@@ -83,40 +96,47 @@
 #pragma mark Methods to send data to JavaScript
 
 /**
- *  Send launch event to JS.
- *
- *  @param host        host that matches the launch url
- *  @param originalUrl launch url
+ *  Try to send event to the web page.
+ *  If there is a subscriber for the event - it will be consumed. 
+ *  If not - it will stay until someone subscribes to it.
  */
-- (void)sendEventToJSWithHost:(CULHost *)host originalURL:(NSURL *)originalUrl {
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithHost:host originalURL:originalUrl];
-    
-    if (_defaultCallbackId == nil) {
-        _storedMessage = pluginResult;
+- (void)tryToConsumeEvent {
+    if (_subscribers.count == 0 || _storedEvent == nil) {
         return;
     }
     
-    [self dispatchPluginResult:pluginResult];
-}
-
-/**
- *  Send plugin result to JS through the default callback.
- *
- *  @param result result to send
- */
-- (void)dispatchPluginResult:(CDVPluginResult *)result {
-    [self.commandDelegate sendPluginResult:result callbackId:_defaultCallbackId];
+    NSString *storedEventName = [_storedEvent eventName];
+    for (NSString *eventName in _subscribers) {
+        if ([storedEventName isEqualToString:eventName]) {
+            NSString *callbackID = _subscribers[eventName];
+            [self.commandDelegate sendPluginResult:_storedEvent callbackId:callbackID];
+            _storedEvent = nil;
+            break;
+        }
+    }
 }
 
 #pragma mark Methods, available from JavaScript side
 
-- (void)jsInitPlugin:(CDVInvokedUrlCommand *)command {
-    _defaultCallbackId = command.callbackId;
-    
-    if (_storedMessage) {
-        [self dispatchPluginResult:_storedMessage];
-        _storedMessage = nil;
+- (void)jsSubscribeForEvent:(CDVInvokedUrlCommand *)command {
+    NSString *eventName = [command eventName];
+    if (eventName.length == 0) {
+        return;
     }
+    
+    _subscribers[eventName] = command.callbackId;
+    [self tryToConsumeEvent];
 }
+
+- (void)jsUnsubscribeFromEvent:(CDVInvokedUrlCommand *)command {
+    NSString *eventName = [command eventName];
+    if (eventName.length == 0) {
+        return;
+    }
+    
+    [_subscribers removeObjectForKey:eventName];
+}
+
+
 
 @end

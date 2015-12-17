@@ -22,4 +22,8 @@
  */
 + (instancetype)resultWithHost:(CULHost *)host originalURL:(NSURL *)originalURL;
 
+- (BOOL)isResultForEvent:(NSString *)eventName;
+
+- (NSString *)eventName;
+
 @end

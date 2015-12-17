@@ -13,11 +13,18 @@
 @interface CULPlugin : CDVPlugin
 
 /**
- *  Method is invoked from the JS side to establish communication with the native component.
+ *  Subscribe to event.
  *
- *  @param command command with which the method is called
+ *  @param command command from js side with event name and callback id.
  */
-- (void)jsInitPlugin:(CDVInvokedUrlCommand *)command;
+- (void)jsSubscribeForEvent:(CDVInvokedUrlCommand *)command;
+
+/**
+ *  Unsubscribe from event.
+ *
+ *  @param command command from js side with event name
+ */
+- (void)jsUnsubscribeFromEvent:(CDVInvokedUrlCommand *)command;
 
 /**
  *  Try to hanlde application launch when user clicked on the link.

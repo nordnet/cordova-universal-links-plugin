@@ -7,7 +7,7 @@
 #import "CULHost.h"
 
 // default event name
-static NSString *const DEFAULT_EVENT = @"ul_didLaunchAppFromLink";
+static NSString *const DEFAULT_EVENT = @"didLaunchAppFromLink";
 
 // default host scheme
 static NSString *const DEFAULT_SCHEME = @"http";

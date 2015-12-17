@@ -47,6 +47,25 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
     return result;
 }
 
+- (BOOL)isResultForEvent:(NSString *)eventName {
+    NSString *eventInMessage = [self eventName];
+    if (eventInMessage.length == 0 || eventName.length == 0) {
+        return NO;
+    }
+    
+    return [eventInMessage isEqualToString:eventName];
+}
+
+- (NSString *)eventName {
+    if (self.message == nil || ![self.message isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+    
+    NSDictionary *data = self.message;
+    
+    return data[EVENT];
+}
+
 #pragma mark Private API
 
 /**

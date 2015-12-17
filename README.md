@@ -20,7 +20,7 @@ It is important not only to redirect users to your app from the web, but also pr
 
 ## Supported Platforms
 - Android 4.0.0 or above.
-- iOS 9.0 or above. Xcode 7 is required.
+- iOS 8.0 or above. Xcode 7 is required.
 
 ## Documentation
 - [Installation](#installation)
