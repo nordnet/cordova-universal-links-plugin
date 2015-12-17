@@ -11,7 +11,7 @@ import java.util.List;
 public class ULHost {
 
     // default event name, that is dispatched to JS if none was set to the host or path
-    private static final String DEFAULT_EVENT = "ul_didLaunchAppFromLink";
+    private static final String DEFAULT_EVENT = "didLaunchAppFromLink";
 
     // default scheme for the host
     private static final String DEFAULT_SCHEME = "http";

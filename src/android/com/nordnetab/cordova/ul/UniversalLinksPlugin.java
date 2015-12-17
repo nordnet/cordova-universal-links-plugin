@@ -2,6 +2,7 @@ package com.nordnetab.cordova.ul;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.nordnetab.cordova.ul.js.JSAction;
@@ -17,7 +18,10 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nikolay Demyankov on 09.09.15.
@@ -30,9 +34,10 @@ public class UniversalLinksPlugin extends CordovaPlugin {
     // list of hosts, defined in config.xml
     private List<ULHost> supportedHosts;
 
-    // callback through which we will send events to JS
-    private CallbackContext defaultCallback;
+    // list of subscribers
+    private Map<String, CallbackContext> subscribers;
 
+    // stored message, that is captured on application launch
     private JSMessage storedMessage;
 
     // region Public API
@@ -42,13 +47,21 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
 
         supportedHosts = new ULConfigXmlParser(cordova.getActivity()).parse();
+
+        if (subscribers == null) {
+            subscribers = new HashMap<String, CallbackContext>();
+        }
+
+        handleIntent(cordova.getActivity().getIntent());
     }
 
     @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         boolean isHandled = true;
-        if (JSAction.INIT.equals(action)) {
-            initJS(callbackContext);
+        if (JSAction.SUBSCRIBE.equals(action)) {
+            subscribeForEvent(args, callbackContext);
+        } else if (JSAction.UNSUBSCRIBE.equals(action)) {
+            unsubscribeFromEvent(args);
         } else {
             isHandled = false;
         }
@@ -66,41 +79,86 @@ public class UniversalLinksPlugin extends CordovaPlugin {
     // region JavaScript methods
 
     /**
-     * Initialize plugin to communicate with JavaScript side.
+     * Add subscriber for the event.
      *
-     * @param callback default JS callback
+     * @param arguments       arguments, passed from JS side
+     * @param callbackContext callback to use when event is captured
      */
-    private void initJS(CallbackContext callback) {
-        setDefaultCallback(callback);
-        if (storedMessage != null) {
-            sendMessageToJs(storedMessage);
-            storedMessage = null;
+    private void subscribeForEvent(final CordovaArgs arguments, final CallbackContext callbackContext) {
+        final String eventName = getEventNameFromArguments(arguments);
+        if (TextUtils.isEmpty(eventName)) {
             return;
         }
 
-        handleIntent(cordova.getActivity().getIntent());
+        subscribers.put(eventName, callbackContext);
+        tryToConsumeEvent();
     }
 
-    private void setDefaultCallback(CallbackContext callback) {
-        this.defaultCallback = callback;
+    /**
+     * Remove subscriber from the event.
+     *
+     * @param arguments arguments, passed from JS side
+     */
+    private void unsubscribeFromEvent(final CordovaArgs arguments) {
+        if (subscribers.size() == 0) {
+            return;
+        }
+
+        final String eventName = getEventNameFromArguments(arguments);
+        if (TextUtils.isEmpty(eventName)) {
+            return;
+        }
+
+        subscribers.remove(eventName);
+    }
+
+    /**
+     * Get event name from the cordova arguments.
+     *
+     * @param arguments received arguments
+     * @return event name; <code>null</code> if non is found
+     */
+    private String getEventNameFromArguments(final CordovaArgs arguments) {
+        String eventName = null;
+        try {
+            eventName = arguments.getString(0);
+        } catch (JSONException e) {
+            Log.d("UniversalLinks", "Failed to get event name from the JS arguments", e);
+        }
+
+        return eventName;
+    }
+
+    /**
+     * Try to send event to the subscribers.
+     */
+    private void tryToConsumeEvent() {
+        if (subscribers.size() == 0 || storedMessage == null) {
+            return;
+        }
+
+        final String storedEventName = storedMessage.getEventName();
+        final Set<Map.Entry<String, CallbackContext>> subscribersSet = subscribers.entrySet();
+        for (Map.Entry<String, CallbackContext> subscriber : subscribersSet) {
+            final String eventName = subscriber.getKey();
+            if (eventName.equals(storedEventName)) {
+                sendMessageToJs(storedMessage, subscriber.getValue());
+                storedMessage = null;
+                break;
+            }
+        }
     }
 
     /**
      * Send message to JS side.
      *
-     * @param message message to send
-     * @return true - if message is sent; otherwise - false
+     * @param message  message to send
+     * @param callback to what callback we are sending the message
      */
-    private boolean sendMessageToJs(JSMessage message) {
-        if (defaultCallback == null) {
-            return false;
-        }
-
+    private void sendMessageToJs(JSMessage message, CallbackContext callback) {
         final PluginResult result = new PluginResult(PluginResult.Status.OK, message);
         result.setKeepCallback(true);
-        defaultCallback.sendPluginResult(result);
-
-        return true;
+        callback.sendPluginResult(result);
     }
 
     // endregion
@@ -130,18 +188,13 @@ public class UniversalLinksPlugin extends CordovaPlugin {
         // try to find host in the hosts list from the config.xml
         ULHost host = findHostByUrl(launchUri);
         if (host == null) {
-            Log.d("CUL", "Host " + launchUri.getHost() + " is not supported");
+            Log.d("UniversalLinks", "Host " + launchUri.getHost() + " is not supported");
             return;
         }
 
-        // send message to the JS side;
-        // if callback is not yet initialized - store message for later use;
-        final JSMessage message = new JSMessage(host, launchUri);
-        if (!sendMessageToJs(message)) {
-            storedMessage = message;
-        } else {
-            storedMessage = null;
-        }
+        // store message and try to consume it
+        storedMessage = new JSMessage(host, launchUri);
+        tryToConsumeEvent();
     }
 
     /**

@@ -8,8 +8,12 @@ package com.nordnetab.cordova.ul.js;
 public final class JSAction {
 
     /**
-     * Initialize native side to work with JS
+     * Subscribe to event.
      */
-    public static final String INIT = "jsInitPlugin";
+    public static final String SUBSCRIBE = "jsSubscribeForEvent";
 
+    /**
+     * Unsubscribe from event.
+     */
+    public static final String UNSUBSCRIBE = "jsUnsubscribeFromEvent";
 }

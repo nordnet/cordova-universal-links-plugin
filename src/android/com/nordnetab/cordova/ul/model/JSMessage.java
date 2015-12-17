@@ -1,6 +1,7 @@
 package com.nordnetab.cordova.ul.model;
 
 import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +63,8 @@ public class JSMessage extends JSONObject {
         public static final String ORIGIN = "url";
     }
 
+    private String eventName;
+
     /**
      * Constructor
      *
@@ -73,18 +76,27 @@ public class JSMessage extends JSONObject {
         setMessageData(host, originalUri);
     }
 
+    /**
+     * Getter for event name of this message.
+     *
+     * @return event name
+     */
+    public String getEventName() {
+        return eventName;
+    }
+
     // region Event name setters
 
     /**
      * Set event name for this message entry.
      */
     private void setEventName(ULHost host, Uri originalUri) {
-        final String event = getEventName(host, originalUri);
+        eventName = getEventName(host, originalUri);
 
         try {
-            put(JSGeneralKeys.EVENT, event);
+            put(JSGeneralKeys.EVENT, eventName);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("UniversalLinks", "Failed to set event name", e);
         }
     }
 
@@ -129,7 +141,7 @@ public class JSMessage extends JSONObject {
 
             put(JSGeneralKeys.DATA, dataObject);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("UniversalLinks", "Failed to set event data", e);
         }
     }
 
