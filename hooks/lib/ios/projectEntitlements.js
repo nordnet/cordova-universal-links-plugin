@@ -7,9 +7,10 @@ Script only generates content. File it self is included in the xcode project in 
 */
 (function() {
 
-  var xml2js = require('xml2js'),
-    path = require('path'),
-    xmlHelper = require('../xmlHelper.js'),
+  var path = require('path'),
+    fs = require('fs'),
+    plist = require('plist'),
+    mkpath = require('mkpath'),
     ConfigXmlHelper = require('../configXmlHelper.js'),
     ASSOCIATED_DOMAINS = 'com.apple.developer.associated-domains',
     context,
@@ -48,14 +49,14 @@ Script only generates content. File it self is included in the xcode project in 
    * @param {Object} content - data to save; JSON object that will be transformed into xml
    */
   function saveContentToEntitlementsFile(content) {
-    var options = {
-      doctype: {
-        pubID: '-//Apple//DTD PLIST 1.0//EN',
-        sysID: 'http://www.apple.com/DTDs/PropertyList-1.0.dtd'
-      }
-    };
+    var plistContent = plist.build(content),
+      filePath = pathToEntitlementsFile();
 
-    xmlHelper.writeJsonAsXml(content, pathToEntitlementsFile(), options);
+    // ensure that file exists
+    mkpath.sync(path.dirname(filePath));
+
+    // save it's content
+    fs.writeFileSync(filePath, plistContent, 'utf8');
   }
 
   /**
@@ -64,13 +65,16 @@ Script only generates content. File it self is included in the xcode project in 
    * @return {String} entitlements file content
    */
   function getEntitlementsFileContent() {
-    var currentEntitlements = xmlHelper.readXmlAsJson(pathToEntitlementsFile());
-    if (currentEntitlements != null) {
-      return currentEntitlements;
+    var pathToFile = pathToEntitlementsFile(),
+      content;
+
+    try {
+      content = fs.readFileSync(pathToFile, 'utf8');
+    } catch (err) {
+      return defaultEntitlementsFile();
     }
 
-    // return default plist if it's not exist
-    return defaultEntitlementsFile();
+    return plist.parse(content);
   }
 
   /**
@@ -79,14 +83,7 @@ Script only generates content. File it self is included in the xcode project in 
    * @return {String} default entitlements file content
    */
   function defaultEntitlementsFile() {
-    return {
-      'plist': {
-        '$': {
-          'version': '1.0'
-        },
-        'dict': []
-      }
-    };
+    return {};
   }
 
   /**
@@ -98,16 +95,9 @@ Script only generates content. File it self is included in the xcode project in 
    */
   function injectPreferences(currentEntitlements, pluginPreferences) {
     var newEntitlements = currentEntitlements,
-      dictIndex = indexOfAssociatedDomainsDictionary(newEntitlements),
       content = generateAssociatedDomainsContent(pluginPreferences);
 
-    // if associated-domains entry was not found in entitlements file - add it;
-    // if was - replace it with the new version
-    if (dictIndex < 0) {
-      newEntitlements.plist.dict.push(content);
-    } else {
-      newEntitlements.plist.dict[dictIndex] = content;
-    }
+    newEntitlements[ASSOCIATED_DOMAINS] = content;
 
     return newEntitlements;
   }
@@ -128,12 +118,7 @@ Script only generates content. File it self is included in the xcode project in 
       domainsList.push(link);
     });
 
-    return {
-      'key': [ASSOCIATED_DOMAINS],
-      'array': [{
-        'string': domainsList
-      }]
-    };
+    return domainsList;
   }
 
   /**
@@ -144,30 +129,6 @@ Script only generates content. File it self is included in the xcode project in 
    */
   function domainsListEntryForHost(host) {
     return 'applinks:' + host.name;
-  }
-
-  /**
-   * Find index of the associated-domains dictionary in the entitlements file.
-   *
-   * @param {Object} entitlements - entitlements file content
-   * @return {Integer} index of the associated-domains dictionary; -1 - if none was found
-   */
-  function indexOfAssociatedDomainsDictionary(entitlements) {
-    if (entitlements['plist'] == null || entitlements.plist['dict'] == null) {
-      return -1;
-    }
-
-    var index = -1;
-    entitlements.plist.dict.some(function(dictionary, dictIndex) {
-      if (dictionary.key == ASSOCIATED_DOMAINS) {
-        index = dictIndex;
-        return true;
-      }
-
-      return false;
-    });
-
-    return index;
   }
 
   // endregion

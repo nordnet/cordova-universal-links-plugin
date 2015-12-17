@@ -65,7 +65,12 @@ Which is:
       buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
 
       // if deployment target is less then the required one - increase it
-      if (compare(buildSettings['IPHONEOS_DEPLOYMENT_TARGET'], IOS_DEPLOYMENT_TARGET) == -1) {
+      if (buildSettings['IPHONEOS_DEPLOYMENT_TARGET']) {
+        if (compare(buildSettings['IPHONEOS_DEPLOYMENT_TARGET'], IOS_DEPLOYMENT_TARGET) == -1) {
+          buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
+          deploymentTargetIsUpdated = true;
+        }
+      } else {
         buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
         deploymentTargetIsUpdated = true;
       }
