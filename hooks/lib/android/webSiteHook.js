@@ -110,7 +110,7 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
 
     // for android we need to replace * with .* for pattern matching
     if (path.indexOf('*') >= 0) {
-      path = path.replace('*', '.*');
+      path = path.replace(/\*/g, '.*');
     }
 
     // path should start with /

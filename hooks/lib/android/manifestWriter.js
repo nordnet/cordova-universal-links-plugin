@@ -298,7 +298,7 @@ Class injects plugin preferences into AndroidManifest.xml file.
     var attrKey = 'android:path';
     if (pathName.indexOf('*') >= 0) {
       attrKey = 'android:pathPattern';
-      pathName = pathName.replace('*', '.*');
+      pathName = pathName.replace(/\*/g, '.*');
     }
 
     if (pathName.indexOf('/') != 0) {
