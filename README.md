@@ -39,7 +39,7 @@ It is important not only to redirect users to your app from the web, but also pr
 - [Additional documentation links](#additional-documentation-links)
 
 ### Installation
-This requires cordova 5.0+ (current stable 1.0.1)
+This requires cordova 5.0+ (current stable 1.1.0)
 
 ```sh
 cordova plugin add cordova-universal-links-plugin
@@ -142,6 +142,73 @@ is the same as:
     </host>
 </universal-links>
 ```
+
+#### ios-team-id
+
+As described in `Step 2` of [Configure apple-app-site-association file for website](#configure-apple-app-site-association-file-for-website) section: when application is build from the CLI - plugin generates `apple-app-site-association` files for each host, defined in `config.xml`. In them there's an `appID` property that holds your iOS Team ID and Bundle ID:
+
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "<TEAM_ID_FROM_MEMBER_CENTER>.<BUNDLE_ID>",
+        "paths": [
+          "/some/path/*"
+        ]
+      }
+    ]
+  }
+}
+```
+
+* `<BUNDLE_ID>` is replaced with the id, that is defined in the `widget` of your `config.xml`. For example:
+
+  ```xml
+  <widget id="com.example.ul" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  ```
+* `<TEAM_ID_FROM_MEMBER_CENTER>` - that property is defined in the member center of your iOS account. So, you can either put it in the generated `apple-app-site-association` file manually, or use `<ios-team-id>` preference in `config.xml` like so:
+
+  ```xml
+  <universal-links>
+      <ios-team-id value="<TEAM_ID_FROM_MEMBER_CENTER>" />
+  </universal-links>
+  ```
+
+For example, following `config.xml`
+```xml
+<widget id="com.example.ul" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+
+<!-- some other cordova preferences -->
+
+<universal-links>
+    <ios-team-id value="1Q2WER3TY" />
+    <host name="mysite.com" >
+      <path url="/some/path/*" />
+    </host>
+</universal-links>
+</widget>
+```
+
+will result into
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "1Q2WER3TY.com.example.ul",
+        "paths": [
+          "/some/path/*"
+        ]
+      }
+    ]
+  }
+}
+```
+
+This is iOS-only preference, Android doesn't need it.
 
 ### Application launch handling
 As mentioned - it is not enough just to redirect a user into your app, you will also need to display the correct content. In order to help you with that - the plugin will send the appropriate event with url data to the JavaScript side. By default, event name is `ul_didLaunchAppFromLink`, but you can specify any name for any host/path combination by using `event` attribute.
