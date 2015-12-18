@@ -96,6 +96,12 @@ app.initialize();
 
 As you can see, now you subscribe to event via `universalLinks` module when `deviceready` is fired. Actually, you can subscribe to it in any place of your application: plugin stores the event internally and dispatches it when there is a subscriber for it.
 
+Also, in v1.0.x `ul_didLaunchAppFromLink` was used as a default event name. From v1.1.0 you can just do like that:
+```js
+universalLinks.subscribe(null, callbackFunction);
+```
+If you didn't specify event name for the `path` or `host` - in the JS code just pass `null` as event name. But just for readability you might want to specify it `config.xml`.
+
 ### Cordova config preferences
 Cordova uses `config.xml` file to set different project preferences: name, description, starting page and so on. Using this config file you can also set options for the plugin.
 
