@@ -28,7 +28,7 @@
  *  Event name that is sent to JS when user clicks on the link from this host.
  *  Defined as 'event' attribute.
  */
-@property (nonatomic, readonly, strong) NSString *event;
+@property (nonatomic, strong) NSString *event;
 
 /**
  *  List of paths, that is set for that host in config.xml.

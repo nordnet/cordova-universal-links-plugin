@@ -98,17 +98,24 @@
  */
 - (void)processPathTag:(NSDictionary<NSString *, NSString *> *)attributes {
     NSString *urlPath = attributes[kCULPathUrlXmlAttribute];
+    NSString *event = attributes[kCULPathEventXmlAttribute];
     
     // ignore '*' paths; we don't need them here
     if ([urlPath isEqualToString:@"*"] || [urlPath isEqualToString:@".*"]) {
+        // but if path has event name - set it to host
+        if (event) {
+            _processedHost.event = event;
+        }
+        
         return;
     }
     
-    NSString *event = attributes[kCULPathEventXmlAttribute];
+    // if event name is empty - use one from the host
     if (event == nil) {
         event = _processedHost.event;
     }
     
+    // create path entry
     CULPath *path = [[CULPath alloc] initWithUrlPath:urlPath andEvent:event];
     [_processedHost addPath:path];
 }
