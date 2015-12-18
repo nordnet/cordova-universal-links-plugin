@@ -25,7 +25,17 @@
 
 - (void)pluginInitialize {
     [self localInit];
+    // Can be used for testing.
+    // Just uncomment, close the app and reopen it. That will simulate application launch from the link.
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
+
+//- (void)onResume:(NSNotification *)notification {
+//    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+//    [activity setWebpageURL:[NSURL URLWithString:@"http://site2.com/news/page?q=1&v=2#myhash"]];
+//    
+//    [self handleUserActivity:activity];
+//}
 
 - (BOOL)handleUserActivity:(NSUserActivity *)userActivity {
     [self localInit];
