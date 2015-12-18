@@ -121,7 +121,7 @@ In it you define hosts and paths that application should handle. You can have as
 `<host />` tag lets you describe hosts, that your application supports. It can have three attributes:
 - `name` - hostname. **This is a required attribute.**
 - `scheme` - supported url scheme. Should be either `http` or `https`. If not set - `http` is used.
-- `event` - name of the event that is send to JavaScript when application is launched from the link, which contains the given hostname. If not set - `ul_didLaunchAppFromLink` event name is used.
+- `event` - name of the event, that is used to match application launch from this host to a callback on the JS side. If not set - pass `null` as event name when you are subscribing in JS code.
 
 For example,
 
@@ -131,14 +131,14 @@ For example,
 </universal-links>
 ```
 
-defines, that when user clicks on any `https://example.com` link - `ul_myExampleEvent` is dispatched to the JavaScript side. You can subscribe to it and act properly. More details regarding event handling can be found [below](#application-launch-handling).
+defines, that when user clicks on any `https://example.com` link - callback, that was set for `ul_myExampleEvent` gets called. More details regarding event handling can be found [below](#application-launch-handling).
 
 #### path
 In `<path />` tag you define which paths for the given host you want to support. If no `<path />` is set - then we want to handle all of them. If paths are defined - then application will process only those links.
 
 Supported attributes are:
 - `url` - path component of the url; should be relative to the host name. **This is a required attribute.**
-- `event` - name of the event that is send to JavaScript when application is launched from the link with the given hostname and path. If not set - `ul_didLaunchAppFromLink` event name is used.
+- `event` - name of the event, that is used to match application launch from the given hostname and path to a callback on the JS side. If not set - pass `null` as event name when you are subscribing in JS code.
 
 For example,
 
@@ -150,7 +150,7 @@ For example,
 </universal-links>
 ```
 
-defines, that when user clicks on `http://example.com/some/path` - application will be launched, and event `ul_didLaunchAppFromLink` is send to JavaScript side. All other links from that host will be ignored.
+defines, that when user clicks on `http://example.com/some/path` - application will be launched, and default callback gets called. All other links from that host will be ignored.
 
 Query parameters are not used for link matching. For example, `http://example.com/some/path?foo=bar#some_tag` will work the same way as `http://example.com/some/path` does.
 
@@ -262,22 +262,23 @@ will result into
 This is iOS-only preference, Android doesn't need it.
 
 ### Application launch handling
-As mentioned - it is not enough just to redirect a user into your app, you will also need to display the correct content. In order to help you with that - the plugin will send the appropriate event with url data to the JavaScript side. By default, event name is `ul_didLaunchAppFromLink`, but you can specify any name for any host/path combination by using `event` attribute.
-
-To subscribe for default UL event in JavaScript - use `document.addEventListener` like so:
-
+As mentioned - it is not enough just to redirect a user into your app, you will also need to display the correct content. In order to solve that - plugin provides JavaScript module: `universalLinks`. To get notified on application launch do the following:
 ```js
-
-document.addEventListener('ul_didLaunchAppFromLink', didLaunchAppFromLink, false);
-
-function didLaunchAppFromLink(event) {
-  var urlData = event.detail;
-  console.log('Did launch application from the link: ' + urlData.url);
+universalLinks.subscribe('eventName', function (eventData) {
   // do some work
-}
+  console.log('Did launch application from the link: ' + eventData.url);
+});
 ```
 
-`event.detail` holds information about the launching url. For example, for `http://myhost.com/news/ul-plugin-released.html?foo=bar#cordova-news` it will be:
+If you didn't specify event name for path and host in `config.xml` - just pass `null` as a first parameter:
+```js
+universalLinks.subscribe(null, function (eventData) {
+  // do some work
+  console.log('Did launch application from the link: ' + eventData.url);
+});
+```
+
+`eventData` holds information about the launching url. For example, for `http://myhost.com/news/ul-plugin-released.html?foo=bar#cordova-news` it will be:
 
 ```json
 {
@@ -298,6 +299,11 @@ function didLaunchAppFromLink(event) {
 - `path` - path component of the url;
 - `params` - dictionary with query parameters; the ones that after `?` character;
 - `hash` - content after `#` character.
+
+If you want - you can also unsubscribe from the events later on:
+```js
+universalLinks.unsubscribe('eventName');
+```
 
 Now it's time for some examples. In here we are gonna use Android, because it is easier to test (see [testing for Android](#testing-ul-for-android-locally) section). JavaScript side is platform independent, so all the example code below will also work for iOS.
 
@@ -341,26 +347,25 @@ Now it's time for some examples. In here we are gonna use Android, because it is
     // Bind Event Listeners
     bindEvents: function() {
       document.addEventListener('deviceready', this.onDeviceReady, false);
-      document.addEventListener('openNewsListPage', this.onNewsListPageRequested, false);
-      document.addEventListener('openNewsDetailedPage', this.onNewsDetailedPageRequested, false);
     },
 
     // deviceready Event Handler
     onDeviceReady: function() {
-      console.log('Handle deviceready event if needed.');
+      console.log('Device is ready for work');
+      universalLinks.subscribe('openNewsListPage', app.onNewsListPageRequested);
+      universalLinks.subscribe('openNewsDetailedPage', app.onNewsDetailedPageRequested);
     },
 
     // openNewsListPage Event Handler
-    onNewsListPageRequested: function(event) {
+    onNewsListPageRequested: function(eventData) {
       console.log('Showing list of awesome news.');
 
       // do some work to show list of news
     },
 
     // openNewsDetailedPage Event Handler
-    onNewsDetailedPageRequested: function(event) {
-      var linkData = event.detail;
-      console.log('Showing to user details page: ' + linkData.path);
+    onNewsDetailedPageRequested: function(eventData) {
+      console.log('Showing to user details page: ' + eventData.path);
 
       // do some work to show detailed page
     }
@@ -412,7 +417,7 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
    <host name="myhost.com">
      <path url="/news/" event="openNewsListPage" />
      <path url="/news/*" event="openNewsDetailedPage" />
-     <path url="*" />
+     <path url="*" evant="launchedAppFromLink" />
    </host>
   </universal-links>
   ```
@@ -431,34 +436,33 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
     // Bind Event Listeners
     bindEvents: function() {
       document.addEventListener('deviceready', this.onDeviceReady, false);
-      document.addEventListener('openNewsListPage', this.onNewsListPageRequested, false);
-      document.addEventListener('openNewsDetailedPage', this.onNewsDetailedPageRequested, false);
-      document.addEventListener('ul_didLaunchAppFromLink', this.onApplicationDidLaunchFromLink, false);
     },
 
     // deviceready Event Handler
     onDeviceReady: function() {
       console.log('Handle deviceready event if you need');
+      universalLinks.subscribe('openNewsListPage', app.onNewsListPageRequested);
+      universalLinks.subscribe('openNewsDetailedPage', app.onNewsDetailedPageRequested);
+      universalLinks.subscribe('launchedAppFromLink', app.onApplicationDidLaunchFromLink);
     },
 
     // openNewsListPage Event Handler
-    onNewsListPageRequested: function(event) {
+    onNewsListPageRequested: function(eventData) {
       console.log('Showing to user list of awesome news');
 
       // do some work to show list of news
     },
 
     // openNewsDetailedPage Event Handler
-    onNewsDetailedPageRequested: function(event) {
+    onNewsDetailedPageRequested: function(eventData) {
       console.log('Showing to user details page for some news');
 
       // do some work to show detailed page
     },
 
-    // ul_didLaunchAppFromLink Event Handler
-    onApplicationDidLaunchFromLink: function(event) {
-      var linkData = event.detail;
-      console.log('Did launch app from the link: ' + linkData.url);
+    // launchedAppFromLink Event Handler
+    onApplicationDidLaunchFromLink: function(eventData) {
+      console.log('Did launch app from the link: ' + eventData.url);
     }
   };
 
