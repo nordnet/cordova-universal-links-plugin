@@ -214,12 +214,13 @@ As described in `Step 2` of [Configure apple-app-site-association file for websi
 }
 ```
 
-* `<BUNDLE_ID>` is replaced with the id, that is defined in the `widget` of your `config.xml`. For example:
+- `<BUNDLE_ID>` is replaced with the id, that is defined in the `widget` of your `config.xml`. For example:
 
   ```xml
   <widget id="com.example.ul" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   ```
-* `<TEAM_ID_FROM_MEMBER_CENTER>` - that property is defined in the member center of your iOS account. So, you can either put it in the generated `apple-app-site-association` file manually, or use `<ios-team-id>` preference in `config.xml` like so:
+
+- `<TEAM_ID_FROM_MEMBER_CENTER>` - that property is defined in the member center of your iOS account. So, you can either put it in the generated `apple-app-site-association` file manually, or use `<ios-team-id>` preference in `config.xml` like so:
 
   ```xml
   <universal-links>
