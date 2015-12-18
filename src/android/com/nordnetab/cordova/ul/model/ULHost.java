@@ -19,7 +19,7 @@ public class ULHost {
     private final List<ULPath> paths;
     private final String name;
     private final String scheme;
-    private final String event;
+    private String event;
 
     /**
      * Constructor
@@ -43,6 +43,15 @@ public class ULHost {
      */
     public String getEvent() {
         return event;
+    }
+
+    /**
+     * Setter for event name.
+     *
+     * @param event event name
+     */
+    public void setEvent(final String event) {
+        this.event = event;
     }
 
     /**

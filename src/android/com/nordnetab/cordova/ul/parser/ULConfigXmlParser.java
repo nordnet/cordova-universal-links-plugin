@@ -1,6 +1,7 @@
 package com.nordnetab.cordova.ul.parser;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nordnetab.cordova.ul.model.ULHost;
 import com.nordnetab.cordova.ul.model.ULPath;
@@ -117,16 +118,24 @@ public class ULConfigXmlParser extends ConfigXmlParser {
      */
     private void processPathBlock(XmlPullParser xml) {
         final String url = xml.getAttributeValue(null, XmlTags.PATH_URL_TAG);
+        String event = xml.getAttributeValue(null, XmlTags.PATH_EVENT_TAG);
+
         // skip wildcard urls
         if ("*".equals(url) || ".*".equals(url)) {
+            // but if path has event name - set it to host
+            if (!TextUtils.isEmpty(event)) {
+                processedHost.setEvent(event);
+            }
+
             return;
         }
 
-        String event = xml.getAttributeValue(null, XmlTags.PATH_EVENT_TAG);
-        if (event == null) {
+        // if event name is empty - use one from the host
+        if (TextUtils.isEmpty(event)) {
             event = processedHost.getEvent();
         }
 
+        // create path entry
         ULPath path = new ULPath(url, event);
         processedHost.getPaths().add(path);
     }
