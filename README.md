@@ -24,6 +24,7 @@ It is important not only to redirect users to your app from the web, but also pr
 
 ## Documentation
 - [Installation](#installation)
+- [Migrating from previous versions](#migrating-from-previous-versions)
 - [Cordova config preferences](#cordova-config-preferences)
 - [Application launch handling](#application-launch-handling)
 - [Android web integration](#android-web-integration)
@@ -50,6 +51,50 @@ It is also possible to install via repo url directly (**unstable**)
 ```sh
 cordova plugin add https://github.com/nordnet/cordova-universal-links-plugin.git
 ```
+
+### Migrating from previous versions
+
+##### From v1.0.x to v1.1.x
+
+In v1.0.x to capture universal links events you had to subscribe on them like so:
+```js
+document.addEventListener('eventName', didLaunchAppFromLink, false);
+
+function didLaunchAppFromLink(event) {
+  var urlData = event.detail;
+  console.log('Did launch application from the link: ' + urlData.url);
+  // do some work
+}
+```
+And there were some problems with the timing: event could be fired long before you were subscribing to it.
+
+From v1.1.0 it changes to the familiar Cordova style:
+```js
+var app = {
+  // Application Constructor
+  initialize: function() {
+    this.bindEvents();
+  },
+
+  // Bind Event Listeners
+  bindEvents: function() {
+    document.addEventListener('deviceready', this.onDeviceReady, false);
+  },
+
+  // deviceready Event Handler
+  onDeviceReady: function() {
+    universalLinks.subscribe('eventName', app.didLaunchAppFromLink);
+  },
+
+  didLaunchAppFromLink: function(eventData) {
+    alert('Did launch application from the link: ' + eventData.url);
+  }
+};
+
+app.initialize();
+```
+
+As you can see, now you subscribe to event via `universalLinks` module when `deviceready` is fired. Actually, you can subscribe to it in any place of your application: plugin stores the event internally and dispatches it when there is a subscriber for it.
 
 ### Cordova config preferences
 Cordova uses `config.xml` file to set different project preferences: name, description, starting page and so on. Using this config file you can also set options for the plugin.
@@ -216,6 +261,7 @@ As mentioned - it is not enough just to redirect a user into your app, you will 
 To subscribe for default UL event in JavaScript - use `document.addEventListener` like so:
 
 ```js
+
 document.addEventListener('ul_didLaunchAppFromLink', didLaunchAppFromLink, false);
 
 function didLaunchAppFromLink(event) {
