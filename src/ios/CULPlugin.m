@@ -14,7 +14,7 @@
 @interface CULPlugin() {
     NSArray *_supportedHosts;
     CDVPluginResult *_storedEvent;
-    NSMutableDictionary<NSString *, NSString *> *_subscribers;
+    NSMutableDictionary *_subscribers;
 }
 
 @end

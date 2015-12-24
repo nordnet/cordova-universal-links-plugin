@@ -17,6 +17,6 @@
  *
  *  @return list of hosts, defined in the config file
  */
-+ (NSArray<CULHost *> *)parse;
++ (NSArray *)parse;
 
 @end

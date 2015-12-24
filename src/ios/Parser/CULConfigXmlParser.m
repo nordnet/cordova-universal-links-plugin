@@ -10,7 +10,7 @@
 #import "CULXmlTags.h"
 
 @interface CULConfigXmlParser() <NSXMLParserDelegate> {
-    NSMutableArray<CULHost *> *_hostsList;
+    NSMutableArray *_hostsList;
     BOOL _isInsideMainTag;
     BOOL _didParseMainBlock;
     BOOL _isInsideHostBlock;
@@ -23,13 +23,13 @@
 
 #pragma mark Public API
 
-+ (NSArray<CULHost *> *)parse {
++ (NSArray *)parse {
     CULConfigXmlParser *parser = [[CULConfigXmlParser alloc] init];
     
     return [parser parseConfig];
 }
 
-- (NSArray<CULHost *> *)parseConfig {
+- (NSArray *)parseConfig {
     NSURL *cordovaConfigURL = [NSURL fileURLWithPath:[NSBundle pathToCordovaConfigXml]];
     NSXMLParser *configParser = [[NSXMLParser alloc] initWithContentsOfURL:cordovaConfigURL];
     if (configParser == nil) {
@@ -46,7 +46,7 @@
 
 #pragma mark NSXMLParserDelegate implementation
 
-- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary<NSString *,NSString *> *)attributeDict {
+- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
     if (_didParseMainBlock) {
         return;
     }
@@ -84,7 +84,7 @@
  *
  *  @param attributes host tag attributes
  */
-- (void)processHostTag:(NSDictionary<NSString *, NSString *> *)attributes {
+- (void)processHostTag:(NSDictionary *)attributes {
     _processedHost = [[CULHost alloc] initWithHostName:attributes[kCULHostNameXmlAttribute]
                                                 scheme:attributes[kCULHostSchemeXmlAttribute]
                                                  event:attributes[kCULHostEventXmlAttribute]];
@@ -96,7 +96,7 @@
  *
  *  @param attributes path tag attributes
  */
-- (void)processPathTag:(NSDictionary<NSString *, NSString *> *)attributes {
+- (void)processPathTag:(NSDictionary *)attributes {
     NSString *urlPath = attributes[kCULPathUrlXmlAttribute];
     NSString *event = attributes[kCULPathEventXmlAttribute];
     

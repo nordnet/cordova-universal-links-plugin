@@ -33,7 +33,7 @@
 /**
  *  List of paths, that is set for that host in config.xml.
  */
-@property (nonatomic, readonly, strong) NSArray<CULPath *> *paths;
+@property (nonatomic, readonly, strong) NSArray *paths;
 
 /**
  *  Constructor.

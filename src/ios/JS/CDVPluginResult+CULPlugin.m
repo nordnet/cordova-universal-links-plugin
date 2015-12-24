@@ -102,7 +102,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
  */
 + (NSString *)getEventNameBasedOnHost:(CULHost *)host originalURLComponents:(NSURLComponents *)urlComponents {
     NSString *eventName = host.event;
-    NSArray<CULPath *> *hostPaths = host.paths;
+    NSArray *hostPaths = host.paths;
     NSString *originalPath = urlComponents.path;
     
     if (originalPath.length == 0) {
@@ -143,8 +143,8 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
     [dataDict setObject:hash forKey:HASH_ATTRIBUTE];
     
     // set query params
-    NSArray<NSURLQueryItem *> *queryItems = originalURLComponents.queryItems;
-    NSMutableDictionary<NSString *, NSString *> *qParams = [[NSMutableDictionary alloc] init];
+    NSArray *queryItems = originalURLComponents.queryItems;
+    NSMutableDictionary *qParams = [[NSMutableDictionary alloc] init];
     for (NSURLQueryItem *qItem in queryItems) {
         NSString *value = qItem.value ? qItem.value : @"";
         [qParams setValue:value forKey:qItem.name];
