@@ -20,11 +20,12 @@ It is important not only to redirect users to your app from the web, but also pr
 
 ## Supported Platforms
 - Android 4.0.0 or above.
-- iOS 8.0 or above. Xcode 7 is required.
+- iOS 8.0 or above. Xcode 7 is required. To build plugin with Xcode 6 - [read the instructions](#how-to-build-plugin-in-xcode-6) below.
 
 ## Documentation
 - [Installation](#installation)
 - [Migrating from previous versions](#migrating-from-previous-versions)
+- [How to build plugin in Xcode 6](#how-to-build-plugin-in-xcode-6)
 - [Cordova config preferences](#cordova-config-preferences)
 - [Application launch handling](#application-launch-handling)
 - [Android web integration](#android-web-integration)
@@ -101,6 +102,27 @@ Also, in v1.0.x `ul_didLaunchAppFromLink` was used as a default event name. From
 universalLinks.subscribe(null, callbackFunction);
 ```
 If you didn't specify event name for the `path` or `host` - in the JS code just pass `null` as event name. But just for readability you might want to specify it `config.xml`.
+
+### How to build plugin in Xcode 6
+
+If you are still using Xcode 6 and there is no way for you to upgrade right now to Xcode 7 - follow the instructions below in order to use this plugin.
+
+1. Clone the `xcode6-support` branch of the plugin from the GitHub:
+
+  ```sh
+  mkdir /Workspace/Mobile/CordovaPlugins
+  cd /Workspace/Mobile/CordovaPlugins
+  git clone -b xcode6-support https://github.com/nordnet/cordova-universal-links-plugin.git
+  ```
+
+2. Go to your applications project and add plugin from the cloned source:
+
+  ```sh
+  cd /Workspace/Mobile/CoolApp
+  cordova plugin add /Workspace/Mobile/CordovaPlugins/cordova-universal-links-plugin/
+  ```
+
+Now you can build your project in Xcode 6.
 
 ### Cordova config preferences
 Cordova uses `config.xml` file to set different project preferences: name, description, starting page and so on. Using this config file you can also set options for the plugin.
