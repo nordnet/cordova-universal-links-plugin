@@ -632,8 +632,8 @@ This way you can experiment with your Android application and check how it corre
 
 In the case of iOS integration of the Universal Links is a little harder. It consist of two steps:
 
-1. Register your application on [developer console](https://developer.apple.com) and enable `Associated Domains` feature.
-2. Generate, sign and upload `apple-app-site-association` file on your website (if you don't have it yet).
+1. Register your application on [developer console](https://developer.apple.com) and enable `Associated Domains` feature. Make sure your website is SSL ready.
+2. Generate, and upload `apple-app-site-association` file on your website (if you don't have it yet).
 
 First one you will have to do manually, but plugin will help you with the second step.
 
@@ -659,8 +659,7 @@ In order for Universal Links to work - you need to associate your application wi
 
 1. Get SSL certification for your domain name.
 2. Create `apple-app-site-association` file, containing your App ID and paths you want to handle.
-3. Sign it with SSL certificate.
-4. Upload `apple-app-site-association` file in the root of your website.
+3. Upload `apple-app-site-association` file in the root of your website.
 
 ##### Step 1
 
@@ -725,7 +724,7 @@ And the second one:
 }
 ```
 
-Before signing those files and uploading them on your servers - you need to replace `<YOUR_TEAM_ID_FROM_MEMBER_CENTER>` with your actual team ID from the member center. You can find it in `Developer Account Summary` section on the [developer.apple.com](https://developer.apple.com/membercenter/index.action#accountSummary).
+Before uploading them on your servers - you need to replace `<YOUR_TEAM_ID_FROM_MEMBER_CENTER>` with your actual team ID from the member center. You can find it in `Developer Account Summary` section on the [developer.apple.com](https://developer.apple.com/membercenter/index.action#accountSummary).
 
 Also, it is a `Prefix` preference in the App ID description.
 
@@ -735,21 +734,7 @@ If you already have `apple-app-site-association` file - then you need to add `ap
 
 ##### Step 3
 
-Again, you can find lots of information on the Internet regarding singing file with SSL certificate.
-
-Continuing previous example, you can do it like that:
-
-```
-cat firsthost.com#apple-app-site-association | openssl smime -sign -inkey firsthost.com.key
-                                                -signer firsthost.com.cert
-                                                -certfile intermediate.cert
-                                                -noattr -nodetach
-                                                -outform DER > apple-app-site-association
-```
-
-##### Step 4
-
-Upload signed `apple-app-site-association` file in the root of your domain.
+Upload `apple-app-site-association` file in the root of your domain.
 
 **It should be downloadable from the direct link.** For example, `https://firsthost.com/apple-app-site-association`.
 
