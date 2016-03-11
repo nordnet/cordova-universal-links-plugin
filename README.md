@@ -440,7 +440,7 @@ Now, let's say, you want your app to handle all links from `myhost.com`, but you
    <host name="myhost.com">
      <path url="/news/" event="openNewsListPage" />
      <path url="/news/*" event="openNewsDetailedPage" />
-     <path url="*" evant="launchedAppFromLink" />
+     <path url="*" event="launchedAppFromLink" />
    </host>
   </universal-links>
   ```
