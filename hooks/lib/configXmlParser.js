@@ -4,8 +4,6 @@ Parser for config.xml file. Read plugin-specific preferences (from <universal-li
 (function() {
 
   var path = require('path'),
-    fs = require('fs'),
-    xml2js = require('xml2js'),
     ConfigXmlHelper = require('./configXmlHelper.js'),
     DEFAULT_SCHEME = 'http';
 

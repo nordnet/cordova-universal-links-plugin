@@ -81,14 +81,21 @@ Additional documentation regarding apple-app-site-association file can be found 
    * @return {Object} content of the file as JSON object
    */
   function generateFileContentForHost(host, teamId) {
-    var appID = teamId + '.' + getBundleId();
+    var appID = teamId + '.' + getBundleId(),
+      paths = host.paths.slice();
+
+    // if paths are '*' - we should add '/' to it to support root domains.
+    // https://github.com/nordnet/cordova-universal-links-plugin/issues/46
+    if (paths.length == 1 && paths[0] === '*') {
+      paths.push('/');
+    }
 
     return {
       "applinks": {
         "apps": [],
         "details": [{
           "appID": appID,
-          "paths": host.paths
+          "paths": paths
         }]
       }
     };

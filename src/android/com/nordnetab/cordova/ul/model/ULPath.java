@@ -17,7 +17,7 @@ public class ULPath {
      * @param event event name
      */
     public ULPath(final String url, final String event) {
-        this.url = url.replace("*", "(.*)");
+        this.url = url.replace("*", "(.*)").toLowerCase();
         this.event = event;
     }
 

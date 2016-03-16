@@ -40,10 +40,10 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
 
 + (instancetype)resultWithHost:(CULHost *)host originalURL:(NSURL *)originalURL {
     NSDictionary *message = [self prepareMessageForHost:host originalURL:originalURL];
-    
+
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [result setKeepCallbackAsBool:YES];
-    
+
     return result;
 }
 
@@ -52,7 +52,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
     if (eventInMessage.length == 0 || eventName.length == 0) {
         return NO;
     }
-    
+
     return [eventInMessage isEqualToString:eventName];
 }
 
@@ -60,9 +60,9 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
     if (self.message == nil || ![self.message isKindOfClass:[NSDictionary class]]) {
         return nil;
     }
-    
+
     NSDictionary *data = self.message;
-    
+
     return data[EVENT];
 }
 
@@ -80,15 +80,15 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
 + (NSDictionary *)prepareMessageForHost:(CULHost *)host originalURL:(NSURL *)originalURL {
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:originalURL resolvingAgainstBaseURL:YES];
     NSMutableDictionary *messageDict = [[NSMutableDictionary alloc] init];
-    
+
     // set event name
     NSString *eventName = [self getEventNameBasedOnHost:host originalURLComponents:urlComponents];
     [messageDict setObject:eventName forKey:EVENT];
-    
+
     // set event details
     NSDictionary *data = [self getDataDictionaryForURLComponents:urlComponents];
     [messageDict setObject:data forKey:DATA];
-    
+
     return messageDict;
 }
 
@@ -103,8 +103,8 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
 + (NSString *)getEventNameBasedOnHost:(CULHost *)host originalURLComponents:(NSURLComponents *)urlComponents {
     NSString *eventName = host.event;
     NSArray *hostPaths = host.paths;
-    NSString *originalPath = urlComponents.path;
-    
+    NSString *originalPath = urlComponents.path.lowercaseString;
+
     if (originalPath.length == 0) {
         return eventName;
     }
@@ -116,7 +116,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
             break;
         }
     }
-    
+
     return eventName;
 }
 
@@ -129,7 +129,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
  */
 + (NSDictionary *)getDataDictionaryForURLComponents:(NSURLComponents *)originalURLComponents {
     NSMutableDictionary *dataDict = [[NSMutableDictionary alloc] init];
-    
+
     NSString *originUrl = originalURLComponents.URL.absoluteString;
     NSString *host = originalURLComponents.host ? originalURLComponents.host : @"";
     NSString *path = originalURLComponents.path ? originalURLComponents.path : @"";
@@ -141,7 +141,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
     [dataDict setObject:path forKey:PATH_ATTRIBUTE];
     [dataDict setObject:scheme forKey:SCHEME_ATTRIBUTE];
     [dataDict setObject:hash forKey:HASH_ATTRIBUTE];
-    
+
     // set query params
     NSArray *queryItems = originalURLComponents.queryItems;
     NSMutableDictionary *qParams = [[NSMutableDictionary alloc] init];
@@ -150,7 +150,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
         [qParams setValue:value forKey:qItem.name];
     }
     [dataDict setObject:qParams forKey:URL_PARAMS_ATTRIBUTE];
-    
+
     return dataDict;
 }
 

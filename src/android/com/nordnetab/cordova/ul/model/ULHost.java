@@ -29,7 +29,7 @@ public class ULHost {
      * @param event  event that corresponds to this host
      */
     public ULHost(final String name, final String scheme, final String event) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.scheme = (scheme == null) ? DEFAULT_SCHEME : scheme;
         this.event = (event == null) ? DEFAULT_EVENT : event;
         this.paths = new ArrayList<ULPath>();
