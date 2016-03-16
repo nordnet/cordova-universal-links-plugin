@@ -107,7 +107,7 @@ public class JSMessage extends JSONObject {
      */
     private String getEventName(ULHost host, Uri originalUri) {
         String event = host.getEvent();
-        final String originPath = originalUri.getPath();
+        final String originPath = originalUri.getPath().toLowerCase();
         final List<ULPath> hostPathsList = host.getPaths();
         for (ULPath hostPath : hostPathsList) {
             final String hostPathUrl = hostPath.getUrl();
