@@ -93,8 +93,9 @@
 - (CULHost *)findHostByURL:(NSURL *)launchURL {
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:launchURL resolvingAgainstBaseURL:YES];
     CULHost *host = nil;
+    NSString *launchedHost = urlComponents.host.lowercaseString;
     for (CULHost *supportedHost in _supportedHosts) {
-        if ([supportedHost.name isEqualToString:urlComponents.host]) {
+        if ([supportedHost.name isEqualToString:launchedHost]) {
             host = supportedHost;
             break;
         }

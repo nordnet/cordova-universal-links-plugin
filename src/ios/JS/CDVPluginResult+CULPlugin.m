@@ -103,7 +103,7 @@ static NSString *const URL_PARAMS_ATTRIBUTE = @"params";
 + (NSString *)getEventNameBasedOnHost:(CULHost *)host originalURLComponents:(NSURLComponents *)urlComponents {
     NSString *eventName = host.event;
     NSArray<CULPath *> *hostPaths = host.paths;
-    NSString *originalPath = urlComponents.path;
+    NSString *originalPath = urlComponents.path.lowercaseString;
     
     if (originalPath.length == 0) {
         return eventName;

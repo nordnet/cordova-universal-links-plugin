@@ -25,7 +25,7 @@ static NSString *const DEFAULT_SCHEME = @"http";
     if (self) {
         _event = event ? event : DEFAULT_EVENT;
         _scheme = scheme ? scheme : DEFAULT_SCHEME;
-        _name = name;
+        _name = name.lowercaseString;
         _paths = [[NSMutableArray alloc] init];
     }
     return self;
