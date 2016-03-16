@@ -23,7 +23,7 @@ Small helper class to read/write from/to xml file.
       parsedData;
 
     try {
-      xmlData = fs.readFileSync(filePath);
+      xmlData = fs.readFileSync(filePath, 'utf-8');
       xmlParser = new xml2js.Parser();
       xmlParser.parseString(xmlData, function(err, data) {
         if (data) {
@@ -48,7 +48,7 @@ Small helper class to read/write from/to xml file.
       isSaved = true;
 
     try {
-      fs.writeFileSync(filePath, changedXmlData);
+      fs.writeFileSync(filePath, changedXmlData, 'utf-8');
     } catch (err) {
       console.log(err);
       isSaved = false;

@@ -95,7 +95,7 @@ function isInstallationAlreadyPerformed(ctx) {
   var pathToInstallFlag = path.join(ctx.opts.projectRoot, 'plugins', ctx.opts.plugin.id, INSTALLATION_FLAG_FILE_NAME),
     isInstalled = false;
   try {
-    var content = fs.readFileSync(pathToInstallFlag);
+    var content = fs.readFileSync(pathToInstallFlag, 'utf-8');
     isInstalled = true;
   } catch (err) {
   }
