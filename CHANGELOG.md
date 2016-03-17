@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.1.1 (2016-03-17)
+
+**Bug fixes:**
+
+- [Issue #52](https://github.com/nordnet/cordova-universal-links-plugin/issues/52). Fixed `config.xml` file preferences reading. Thanks to [@ikostic](https://github.com/ikostic) for providing fix.
+- [Issue #47](https://github.com/nordnet/cordova-universal-links-plugin/issues/47). If `paths` in `apple-app-site-association` file contains only `*` - we will also add `/`, so that app would be opened from root domain.
+- Merged [PR #42](https://github.com/nordnet/cordova-universal-links-plugin/pull/42). Fixed Android web integration on Android 6.0. Thanks to [@mohamed-ahmed](https://github.com/mohamed-ahmed).
+
+**Docs:**
+
+- Merged [PR #50](https://github.com/nordnet/cordova-universal-links-plugin/pull/50). Fixed typo in documentation. Thanks to [@rafaellop](https://github.com/rafaellop).
+- Merged [PR #43](https://github.com/nordnet/cordova-universal-links-plugin/pull/43). Updated documentation regarding `apple-app-site-association` file. Thanks to [@Chun-Yang](https://github.com/Chun-Yang).
+- Updated `Useful notes on Universal Links for iOS` section. Thanks to [@conor-mac-aoidh](https://github.com/conor-mac-aoidh) for providing information.
+
 ## 1.1.0 (2015-12-18)
 
 **Bug fixes:**
