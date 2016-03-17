@@ -38,10 +38,12 @@ It is important not only to redirect users to your app from the web, but also pr
   - [Configure apple-app-site-association file for website](#configure-apple-app-site-association-file-for-website)
 - [Testing iOS application](#testing-ios-application)
 - [Useful notes on Universal Links for iOS](#useful-notes-on-universal-links-for-ios)
+  - [They don't work everywhere](#they-dont-work-everywhere)
+  - [How links handled in Safari](#how-links-handled-in-safari)
 - [Additional documentation links](#additional-documentation-links)
 
 ### Installation
-This requires cordova 5.0+ (current stable 1.1.0)
+This requires cordova 5.0+ (current stable 1.1.1)
 
 ```sh
 cordova plugin add cordova-universal-links-plugin
@@ -657,13 +659,13 @@ Now your App ID is registered and has `Associated Domains` feature.
 
 In order for Universal Links to work - you need to associate your application with the certain domain. For that you need to:
 
-1. Get SSL certification for your domain name.
+1. Make your site to work over `https`.
 2. Create `apple-app-site-association` file, containing your App ID and paths you want to handle.
 3. Upload `apple-app-site-association` file in the root of your website.
 
 ##### Step 1
 
-We are not gonna describe stuff regarding certificate acquiring. You can find lots of information about that on the Internet. For example, you can do as described [here](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9).
+We are not gonna describe stuff regarding certificate acquiring and making your website to work over `https`. You can find lots of information about that on the Internet.
 
 ##### Step 2
 
@@ -716,13 +718,15 @@ And the second one:
       {
         "appID": "<YOUR_TEAM_ID_FROM_MEMBER_CENTER>.com.example.ul",
         "paths": [
-          "*"
+          "*", "/"
         ]
       }
     ]
   }
 }
 ```
+
+**Note:** in the second case plugin will add `/` to the paths, so the app would be opened with `https://secondhost.com.com/` links, and not only with `https://secondhost.com/some/random.html`.
 
 Before uploading them on your servers - you need to replace `<YOUR_TEAM_ID_FROM_MEMBER_CENTER>` with your actual team ID from the member center. You can find it in `Developer Account Summary` section on the [developer.apple.com](https://developer.apple.com/membercenter/index.action#accountSummary).
 
@@ -803,7 +807,13 @@ Step-by-step guide:
 
 ### Useful notes on Universal Links for iOS
 
-First of all, you need to understand how the Universal Links works. When user clicks on the link - Safari checks, if any of the installed apps can handle it. If app is found - Safari starts it, if not - link opened as usually in the browser.
+#### They don't work everywhere
+
+First of all - you need to accept the fact, that Universal Links **doesn't work everywhere**. Some applications doesn't respect them. You can read more in [that article](https://blog.branch.io/ios-9.2-deep-linking-guide-transitioning-to-universal-links), section `Universal Links Still Don’t Work Everywhere`.
+
+#### How links handled in Safari
+
+When user clicks on the link - Safari checks, if any of the installed apps can handle it. If app is found - Safari starts it, if not - link opened as usually in the browser.
 
 Now, let's assume you have a following setup in `config.xml`:
 ```xml
@@ -813,6 +823,7 @@ Now, let's assume you have a following setup in `config.xml`:
   </host>
 </universal-links>
 ```
+
 By this we state, that our app should handle `http://mywebsite.com/some/page.html` link. So, if user clicks on `http://mywebsite.com` - application would not launch. And this is totally as you want it to be. Now comes the interesting part: if user opens `http://mywebsite.com` in the Safari and then presses on `http://mywebsite.com/some/page.html` link - application is not gonna start, he will stay in the browser. And at the top of that page he will see a Smart Banner. To launch the application user will have to click on that banner. And this is a normal behaviour from iOS. If user already viewing your website in the browser - he doesn't want to leave it, when he clicks on some link, that leads on the page inside your site. But if he clicks on the `http://mywebsite.com/some/page.html` link from some other source - then it will start your application.
 
 Another thing that every developer should be aware of:
@@ -832,3 +843,4 @@ When a user is in an app, opened by Universal Links - a return to browser option
 - [Apple documentation on apple-app-site-association file](https://developer.apple.com/library/ios/documentation/Security/Reference/SharedWebCredentialsRef/index.html)
 - [How to setup universal links on iOS 9](https://blog.branch.io/how-to-setup-universal-links-to-deep-link-on-apple-ios-9)
 - [Branch.io documentation on universal links](https://dev.branch.io/recipes/branch_universal_links/#enable-universal-links-on-the-branch-dashboard)
+- [Where universal links don't work](https://blog.branch.io/ios-9.2-deep-linking-guide-transitioning-to-universal-links)
