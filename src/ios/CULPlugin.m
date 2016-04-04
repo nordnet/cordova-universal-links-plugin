@@ -95,7 +95,8 @@
     CULHost *host = nil;
     NSString *launchedHost = urlComponents.host.lowercaseString;
     for (CULHost *supportedHost in _supportedHosts) {
-        if ([supportedHost.name isEqualToString:launchedHost]) {
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"self LIKE %@", supportedHost.name];
+        if ([pred evaluateWithObject: launchedHost]) {
             host = supportedHost;
             break;
         }
