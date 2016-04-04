@@ -93,10 +93,9 @@
 - (CULHost *)findHostByURL:(NSURL *)launchURL {
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:launchURL resolvingAgainstBaseURL:YES];
     CULHost *host = nil;
-    NSString *launchedHost = urlComponents.host.lowercaseString;
     for (CULHost *supportedHost in _supportedHosts) {
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"self LIKE %@", supportedHost.name];
-        if ([pred evaluateWithObject: launchedHost]) {
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"self LIKE[c] %@", supportedHost.name];
+        if ([pred evaluateWithObject: urlComponents.host]) {
             host = supportedHost;
             break;
         }
