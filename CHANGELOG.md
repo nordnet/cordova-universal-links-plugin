@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.2 (2016-04-27)
+
+**Bug fixes:**
+
+- [Issue #27](https://github.com/nordnet/cordova-universal-links-plugin/issues/27). From now on dependency packages will be installed in the plugin's folder instead of the project's root folder.
+
 ## 1.1.1 (2016-03-17)
 
 **Bug fixes:**
