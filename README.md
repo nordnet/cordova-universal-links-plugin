@@ -564,7 +564,8 @@ Next, you’ll want to connect your app using the Google Play Console so the app
 Here's a very simplified example of how the website www.example.com could use Digital Asset Links to specify that any links to URLs in that site should open in a designated app rather than the browser:
 
 1. The website www.example.com publishes a statement list at https://www.example.com/.well-known/assetlinks.json. This is the official name and location for a statement list on a site; statement lists in any other location, or with any other name, are not valid for this site. In our example, the statement list consists of one statement, granting its Android app the permission to open links on its site:
-```[{
+```json
+[{
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target" : { "namespace": "android_app", "package_name": "com.example.app",
                "sha256_cert_fingerprints": ["hash_of_app_certificate"] }
