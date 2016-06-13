@@ -559,6 +559,37 @@ If your website is brand new, you’ll want to verify it through [Webmaster Tool
 
 Next, you’ll want to connect your app using the Google Play Console so the app indexing starts working. If you go to your app, there’s a menu that says `Services and API` in which you can click `Verify Website`, and provide the URL to check that it has the appropriate tags in the HTML. Once that’s all set up, it will start showing in search results.
 
+#### For Android version 6.0 Marshmallow or greater Digital Asset Links can be used
+
+Here are some possible uses for Digital Asset Links:
+
+Website A declares that links to its site should open in a designated app on mobile devices, if the app is installed.
+Website A declares that it can share its Chrome user credentials with website B so that the user won't have to log in to website B if it is logged into website A.
+App A declares that it can share device settings, such as location, with website B.
+Key terms
+
+Principal: The principal is the app or website making the statement. In Digital Asset Links, the principal is always the app or website that hosts the statement list.
+Statement list: Statements are contained in a statement list that contains one or more statements. A statement list is cleartext and publicly accessible, in a location that is controlled by the principal and difficult to spoof or tamper with. It can be a free-standing file, or a section of another, larger item. For example, on a website, it is an entire file; in an Android app, it is a section in the app manifest. Statements can be viewed and verified by anyone, using non-proprietary methods. See the statement list documentation for more information.
+Statement: A statement is a tightly structured JSON construct that consists of a relation (what the statement says to do, for example: Enable sharing credentials) and a target (the website or app that the relation applies to). Therefore, each statement is like a sentence, where principal says relation about target.
+Statement consumer: A statement consumer requests a statement list from a principal, checks for the presence of a statement against a given principal, and if it exists, can perform the action specified. See the statement comsuming documentation for more information.
+Quick usage example
+
+Here's a very simplified example of how the website www.example.com could use Digital Asset Links to specify that any links to URLs in that site should open in a designated app rather than the browser:
+
+1. The website www.example.com publishes a statement list at https://www.example.com/.well-known/assetlinks.json. This is the official name and location for a statement list on a site; statement lists in any other location, or with any other name, are not valid for this site. In our example, the statement list consists of one statement, granting its Android app the permission to open links on its site:
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target" : { "namespace": "android_app", "package_name": "com.example.app",
+               "sha256_cert_fingerprints": ["hash_of_app_certificate"] }
+}]
+A statement list supports an array of statements within the [ ] marks, but our example file contains only one statement.
+2. The Android app listed in the statement above has an intent filter that specifies the scheme, host, and path pattern of URLs that it wants to handle: in this case, https://www.example.com. The intent filter includes a special attribute android:autoVerify, new to Android M, which indicates that Android should verify the statement on the website described in the intent filter when the app is installed.
+3. A user installs the app. Android sees the intent filter with the autoVerify attribute and checks for the presence of the statement list at the specified site; if present, Android checks whether that file includes a statement granting link handling to the app, and verifies the app against the statement by certificate hash. If everything checks out, Android will then forward any https://www.example.com intents to the example.com app.
+4. The user clicks a link to https://www.example.com/puppies on their device. This link could be anywhere: in a browser, in a Google Search Appliance suggestion, or anywhere else. Android forwards the intent to the example.com app.
+5. The example.com app receives the intent and chooses to handle it, opening the puppies page in the app. If for some reason the app had declined to handle the link, or if the app were not on the device, then the link would have been sent to the next default intent handler matching that intent pattern (often the browser).
+
+
+
 ### Testing UL for Android locally
 
 To test Android application for Deep Linking support you just need to execute the following command in the console:
