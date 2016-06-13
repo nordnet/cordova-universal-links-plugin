@@ -564,11 +564,11 @@ Next, you’ll want to connect your app using the Google Play Console so the app
 Here's a very simplified example of how the website www.example.com could use Digital Asset Links to specify that any links to URLs in that site should open in a designated app rather than the browser:
 
 1. The website www.example.com publishes a statement list at https://www.example.com/.well-known/assetlinks.json. This is the official name and location for a statement list on a site; statement lists in any other location, or with any other name, are not valid for this site. In our example, the statement list consists of one statement, granting its Android app the permission to open links on its site:
-[{
+```[{
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target" : { "namespace": "android_app", "package_name": "com.example.app",
                "sha256_cert_fingerprints": ["hash_of_app_certificate"] }
-}]
+```}]
 A statement list supports an array of statements within the [ ] marks, but our example file contains only one statement.
 2. The Android app listed in the statement above has an intent filter that specifies the scheme, host, and path pattern of URLs that it wants to handle: in this case, https://www.example.com. The intent filter includes a special attribute android:autoVerify, new to Android M, which indicates that Android should verify the statement on the website described in the intent filter when the app is installed.
 3. A user installs the app. Android sees the intent filter with the autoVerify attribute and checks for the presence of the statement list at the specified site; if present, Android checks whether that file includes a statement granting link handling to the app, and verifies the app against the statement by certificate hash. If everything checks out, Android will then forward any https://www.example.com intents to the example.com app.
