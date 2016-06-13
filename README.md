@@ -561,19 +561,6 @@ Next, you’ll want to connect your app using the Google Play Console so the app
 
 #### For Android version 6.0 Marshmallow or greater Digital Asset Links can be used
 
-Here are some possible uses for Digital Asset Links:
-
-Website A declares that links to its site should open in a designated app on mobile devices, if the app is installed.
-Website A declares that it can share its Chrome user credentials with website B so that the user won't have to log in to website B if it is logged into website A.
-App A declares that it can share device settings, such as location, with website B.
-Key terms
-
-Principal: The principal is the app or website making the statement. In Digital Asset Links, the principal is always the app or website that hosts the statement list.
-Statement list: Statements are contained in a statement list that contains one or more statements. A statement list is cleartext and publicly accessible, in a location that is controlled by the principal and difficult to spoof or tamper with. It can be a free-standing file, or a section of another, larger item. For example, on a website, it is an entire file; in an Android app, it is a section in the app manifest. Statements can be viewed and verified by anyone, using non-proprietary methods. See the statement list documentation for more information.
-Statement: A statement is a tightly structured JSON construct that consists of a relation (what the statement says to do, for example: Enable sharing credentials) and a target (the website or app that the relation applies to). Therefore, each statement is like a sentence, where principal says relation about target.
-Statement consumer: A statement consumer requests a statement list from a principal, checks for the presence of a statement against a given principal, and if it exists, can perform the action specified. See the statement comsuming documentation for more information.
-Quick usage example
-
 Here's a very simplified example of how the website www.example.com could use Digital Asset Links to specify that any links to URLs in that site should open in a designated app rather than the browser:
 
 1. The website www.example.com publishes a statement list at https://www.example.com/.well-known/assetlinks.json. This is the official name and location for a statement list on a site; statement lists in any other location, or with any other name, are not valid for this site. In our example, the statement list consists of one statement, granting its Android app the permission to open links on its site:
