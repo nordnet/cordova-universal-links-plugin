@@ -568,7 +568,8 @@ Here's a very simplified example of how the website www.example.com could use Di
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target" : { "namespace": "android_app", "package_name": "com.example.app",
                "sha256_cert_fingerprints": ["hash_of_app_certificate"] }
-```}]
+}]
+```
 A statement list supports an array of statements within the [ ] marks, but our example file contains only one statement.
 2. The Android app listed in the statement above has an intent filter that specifies the scheme, host, and path pattern of URLs that it wants to handle: in this case, https://www.example.com. The intent filter includes a special attribute android:autoVerify, new to Android M, which indicates that Android should verify the statement on the website described in the intent filter when the app is installed.
 3. A user installs the app. Android sees the intent filter with the autoVerify attribute and checks for the presence of the statement list at the specified site; if present, Android checks whether that file includes a statement granting link handling to the app, and verifies the app against the statement by certificate hash. If everything checks out, Android will then forward any https://www.example.com intents to the example.com app.
