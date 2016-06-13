@@ -20,7 +20,9 @@ It is important not only to redirect users to your app from the web, but also pr
 
 ## Supported Platforms
 - Android 4.0.0 or above.
-- iOS 8.0 or above. Xcode 7 is required. To build plugin with Xcode 6 - [read the instructions](#how-to-build-plugin-in-xcode-6) below.
+- iOS 9.0 or above. Xcode 7 is required. To build plugin with Xcode 6 - [read the instructions](#how-to-build-plugin-in-xcode-6) below.
+
+**iOS Note:** you can use this plugin in iOS 8 applications. It will not crash the app, but it also is not gonna handle the links, because this is iOS 9 feature.
 
 ## Documentation
 - [Installation](#installation)
