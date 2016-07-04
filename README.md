@@ -288,6 +288,16 @@ will result into
 
 This is iOS-only preference, Android doesn't need it.
 
+#### Prevent Android from creating mutiple app instances
+
+When clicking on a universal link from another App (typically from an email client), Android will likely create a new instance of your app, even if it is already loaded in memory. It may even create a new instance with each click, resulting in many instances of your app in the task switcher. See details in [issue #37](https://github.com/nordnet/cordova-universal-links-plugin/issues/37).
+
+To force Android opening always the same app instance, a known workaround is to change the [activity launch mode](https://developer.android.com/guide/topics/manifest/activity-element.html#lmode) to `singleInstance`. To do so, you can use the following preference in Cordova `config.xml` file:
+```xml
+<preference name="AndroidLaunchMode" value="singleInstance" />
+```
+
+
 ### Application launch handling
 As mentioned - it is not enough just to redirect a user into your app, you will also need to display the correct content. In order to solve that - plugin provides JavaScript module: `universalLinks`. To get notified on application launch do the following:
 ```js
