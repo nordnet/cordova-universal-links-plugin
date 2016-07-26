@@ -6,214 +6,196 @@ Which is:
 - path to .entitlements file added to Code Sign Entitlements preference
 */
 
-(function() {
+var path = require('path');
+var compare = require('node-version-compare');
+var ConfigXmlHelper = require('../configXmlHelper.js');
+var IOS_DEPLOYMENT_TARGET = '8.0';
+var COMMENT_KEY = /_comment$/;
+var context;
 
-  var path = require('path'),
-    compare = require('node-version-compare'),
-    ConfigXmlHelper = require('../configXmlHelper.js'),
-    // pbxFile = require('xcode/lib/pbxFile'),
-    IOS_DEPLOYMENT_TARGET = '8.0',
-    COMMENT_KEY = /_comment$/,
-    context;
+module.exports = {
+  enableAssociativeDomainsCapability: enableAssociativeDomainsCapability
+}
 
-  module.exports = {
-    enableAssociativeDomainsCapability: enableAssociativeDomainsCapability
-  }
+// region Public API
 
-  // region Public API
+/**
+ * Activate associated domains capability for the application.
+ *
+ * @param {Object} cordovaContext - cordova context object
+ */
+function enableAssociativeDomainsCapability(cordovaContext) {
+  context = cordovaContext;
 
-  /**
-   * Activate associated domains capability for the application.
-   *
-   * @param {Object} cordovaContext - cordova context object
-   */
-  function enableAssociativeDomainsCapability(cordovaContext) {
-    context = cordovaContext;
+  var projectFile = loadProjectFile();
 
-    var projectFile = loadProjectFile();
+  // adjust preferences
+  activateAssociativeDomains(projectFile.xcode);
 
-    // adjust preferences
-    activateAssociativeDomains(projectFile.xcode);
+  // add entitlements file to pbxfilereference
+  addPbxReference(projectFile.xcode);
 
-    // add entitlements file to pbxfilereference
-    addPbxReference(projectFile.xcode);
+  // save changes
+  projectFile.write();
+}
 
-    // save changes
-    projectFile.write();
-  }
+// endregion
 
-  // endregion
+// region Alter project file preferences
 
-  // region Alter project file preferences
+/**
+ * Activate associated domains support in the xcode project file:
+ * - set deployment target to ios 9;
+ * - add .entitlements file to Code Sign Entitlements preference.
+ *
+ * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
+ */
+function activateAssociativeDomains(xcodeProject) {
+  var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection());
+  var entitlementsFilePath = pathToEntitlementsFile();
+  var config;
+  var buildSettings;
+  var deploymentTargetIsUpdated;
 
-  /**
-   * Activate associated domains support in the xcode project file:
-   * - set deployment target to ios 9;
-   * - add .entitlements file to Code Sign Entitlements preference.
-   *
-   * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
-   */
-  function activateAssociativeDomains(xcodeProject) {
-    var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
-      entitlementsFilePath = pathToEntitlementsFile(),
-      config,
-      buildSettings,
-      deploymentTargetIsUpdated;
+  for (config in configurations) {
+    buildSettings = configurations[config].buildSettings;
+    buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
 
-    for (config in configurations) {
-      buildSettings = configurations[config].buildSettings;
-      buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
-
-      // if deployment target is less then the required one - increase it
-      if (buildSettings['IPHONEOS_DEPLOYMENT_TARGET']) {
-        if (compare(buildSettings['IPHONEOS_DEPLOYMENT_TARGET'], IOS_DEPLOYMENT_TARGET) == -1) {
-          buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
-          deploymentTargetIsUpdated = true;
-        }
-      } else {
+    // if deployment target is less then the required one - increase it
+    if (buildSettings['IPHONEOS_DEPLOYMENT_TARGET']) {
+      if (compare(buildSettings['IPHONEOS_DEPLOYMENT_TARGET'], IOS_DEPLOYMENT_TARGET) == -1) {
         buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
         deploymentTargetIsUpdated = true;
       }
+    } else {
+      buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
+      deploymentTargetIsUpdated = true;
     }
+  }
 
-    if (deploymentTargetIsUpdated) {
-      console.log('IOS project now has deployment target set as: ' + IOS_DEPLOYMENT_TARGET);
+  if (deploymentTargetIsUpdated) {
+    console.log('IOS project now has deployment target set as: ' + IOS_DEPLOYMENT_TARGET);
+  }
+
+  console.log('IOS project Code Sign Entitlements now set to: ' + entitlementsFilePath);
+}
+
+// endregion
+
+// region PBXReference methods
+
+/**
+ * Add .entitlemets file into the project.
+ *
+ * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
+ */
+function addPbxReference(xcodeProject) {
+  var fileReferenceSection = nonComments(xcodeProject.pbxFileReferenceSection());
+  var entitlementsRelativeFilePath = pathToEntitlementsFile();
+
+  if (isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFilePath)) {
+    console.log('Entitlements file is in reference section.');
+    return;
+  }
+
+  console.log('Entitlements file is not in references section, adding it');
+  createPbxFileReference(xcodeProject, entitlementsRelativeFilePath);
+}
+
+/**
+ * Check if .entitlemets file reference already set.
+ *
+ * @param {Object} fileReferenceSection - PBXFileReference section
+ * @param {String} entitlementsRelativeFilePath - relative path to entitlements file
+ * @return true - if reference is set; otherwise - false
+ */
+function isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFilePath) {
+  var isAlreadyInReferencesSection = false;
+  var uuid;
+  var fileRefEntry;
+
+  for (uuid in fileReferenceSection) {
+    fileRefEntry = fileReferenceSection[uuid];
+    if (fileRefEntry.path && fileRefEntry.path.indexOf(entitlementsRelativeFilePath) > -1) {
+      isAlreadyInReferencesSection = true;
+      break;
     }
-
-    console.log('IOS project Code Sign Entitlements now set to: ' + entitlementsFilePath);
   }
 
-  // endregion
+  return isAlreadyInReferencesSection;
+}
 
-  // region PBXReference methods
+/**
+ * Create reference to the entitlements file in the xcode project.
+ *
+ * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
+ * @param {String} entitlementsRelativeFilePath - relative path to entitlemets file
+ */
+function createPbxFileReference(xcodeProject, entitlementsRelativeFilePath) {
+  xcodeProject.addResourceFile(path.basename(entitlementsRelativeFilePath));
+}
 
-  /**
-   * Add .entitlemets file into the project.
-   *
-   * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
-   */
-  function addPbxReference(xcodeProject) {
-    var fileReferenceSection = nonComments(xcodeProject.pbxFileReferenceSection()),
-      entitlementsRelativeFilePath = pathToEntitlementsFile();
+// region Xcode project file helpers
 
-    if (isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFilePath)) {
-      console.log('Entitlements file is in reference section.');
-      return;
+/**
+ * Load iOS project file from platform specific folder.
+ *
+ * @return {Object} projectFile - project file information
+ */
+function loadProjectFile() {
+  var platform_ios;
+  var projectFile;
+
+  try {
+    // try pre-5.0 cordova structure
+    platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios'];
+    projectFile = platform_ios.parseProjectFile(iosPlatformPath());
+  } catch (e) {
+    // let's try cordova 5.0 structure
+    platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios');
+    projectFile = platform_ios.parseProjectFile(iosPlatformPath());
+  }
+
+  return projectFile;
+}
+
+/**
+ * Remove comments from the file.
+ *
+ * @param {Object} obj - file object
+ * @return {Object} file object without comments
+ */
+function nonComments(obj) {
+  var keys = Object.keys(obj);
+  var newObj = {};
+
+  for (var i = 0, len = keys.length; i < len; i++) {
+    if (!COMMENT_KEY.test(keys[i])) {
+      newObj[keys[i]] = obj[keys[i]];
     }
-
-    console.log('Entitlements file is not in references section, adding it');
-    createPbxFileReference(xcodeProject, entitlementsRelativeFilePath);
   }
 
-  /**
-   * Check if .entitlemets file reference already set.
-   *
-   * @param {Object} fileReferenceSection - PBXFileReference section
-   * @param {String} entitlementsRelativeFilePath - relative path to entitlements file
-   * @return true - if reference is set; otherwise - false
-   */
-  function isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFilePath) {
-    var isAlreadyInReferencesSection = false,
-      uuid,
-      fileRefEntry;
+  return newObj;
+}
 
-    for (uuid in fileReferenceSection) {
-      fileRefEntry = fileReferenceSection[uuid];
-      if (fileRefEntry.path && fileRefEntry.path.indexOf(entitlementsRelativeFilePath) > -1) {
-        isAlreadyInReferencesSection = true;
-        break;
-      }
-    }
+// endregion
 
-    return isAlreadyInReferencesSection;
-  }
+// region Path helpers
 
-  /**
-   * Create reference to the entitlements file in the xcode project.
-   *
-   * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
-   * @param {String} entitlementsRelativeFilePath - relative path to entitlemets file
-   */
-  function createPbxFileReference(xcodeProject, entitlementsRelativeFilePath) {
-    // commented for now
-    // var rootGroup = nonComments(xcodeProject.pbxGroupByName('CustomTemplate')),
-    //   entitlementsPbxFile = new pbxFile(entitlementsRelativeFilePath);
-    //
-    // entitlementsPbxFile.fileRef = xcodeProject.generateUuid(),
-    //   entitlementsPbxFile.uuid = xcodeProject.generateUuid();
-    //
-    // xcodeProject.addToPbxFileReferenceSection(entitlementsPbxFile);
-    //
-    // rootGroup.children.push({
-    //   'value': entitlementsPbxFile.fileRef,
-    //   'comment': path.basename(entitlementsRelativeFilePath)
-    // });
-    xcodeProject.addResourceFile(path.basename(entitlementsRelativeFilePath));
-  }
+function iosPlatformPath() {
+  return path.join(projectRoot(), 'platforms', 'ios');
+}
 
-  // region Xcode project file helpers
+function projectRoot() {
+  return context.opts.projectRoot;
+}
 
-  /**
-   * Load iOS project file from platform specific folder.
-   *
-   * @return {Object} projectFile - project file information
-   */
-  function loadProjectFile() {
-    var platform_ios,
-      projectFile;
+function pathToEntitlementsFile() {
+  var configXmlHelper = new ConfigXmlHelper(context),
+    projectName = configXmlHelper.getProjectName(),
+    fileName = projectName + '.entitlements';
 
-    try {
-      // try pre-5.0 cordova structure
-      platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios'];
-      projectFile = platform_ios.parseProjectFile(iosPlatformPath());
-    } catch (e) {
-      // let's try cordova 5.0 structure
-      platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios');
-      projectFile = platform_ios.parseProjectFile(iosPlatformPath());
-    }
+  return path.join(projectName, 'Resources', fileName);
+}
 
-    return projectFile;
-  }
-
-  /**
-   * Remove comments from the file.
-   *
-   * @param {Object} obj - file object
-   * @return {Object} file object without comments
-   */
-  function nonComments(obj) {
-    var keys = Object.keys(obj),
-      newObj = {};
-
-    for (var i = 0, len = keys.length; i < len; i++) {
-      if (!COMMENT_KEY.test(keys[i])) {
-        newObj[keys[i]] = obj[keys[i]];
-      }
-    }
-
-    return newObj;
-  }
-
-  // endregion
-
-  // region Path helpers
-
-  function iosPlatformPath() {
-    return path.join(projectRoot(), 'platforms', 'ios');
-  }
-
-  function projectRoot() {
-    return context.opts.projectRoot;
-  }
-
-  function pathToEntitlementsFile() {
-    var configXmlHelper = new ConfigXmlHelper(context),
-      projectName = configXmlHelper.getProjectName(),
-      fileName = projectName + '.entitlements';
-
-    return path.join(projectName, 'Resources', fileName);
-  }
-
-  // endregion
-
-})();
+// endregion

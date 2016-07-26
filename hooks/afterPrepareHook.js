@@ -5,14 +5,14 @@ It will inject required preferences in the platform-specific projects, based on 
 data you have specified in the projects config.xml file.
 */
 
-var configParser = require('./lib/configXmlParser.js'),
-  androidManifestWriter = require('./lib/android/manifestWriter.js'),
-  androidWebHook = require('./lib/android/webSiteHook.js'),
-  iosProjectEntitlements = require('./lib/ios/projectEntitlements.js'),
-  iosAppSiteAssociationFile = require('./lib/ios/appleAppSiteAssociationFile.js'),
-  iosProjectPreferences = require('./lib/ios/xcodePreferences.js'),
-  ANDROID = 'android',
-  IOS = 'ios';
+var configParser = require('./lib/configXmlParser.js');
+var androidManifestWriter = require('./lib/android/manifestWriter.js');
+var androidWebHook = require('./lib/android/webSiteHook.js');
+var iosProjectEntitlements = require('./lib/ios/projectEntitlements.js');
+var iosAppSiteAssociationFile = require('./lib/ios/appleAppSiteAssociationFile.js');
+var iosProjectPreferences = require('./lib/ios/xcodePreferences.js');
+var ANDROID = 'android';
+var IOS = 'ios';
 
 module.exports = function(ctx) {
   run(ctx);
@@ -24,8 +24,8 @@ module.exports = function(ctx) {
  * @param {Object} cordovaContext - cordova context object
  */
 function run(cordovaContext) {
-  var pluginPreferences = configParser.readPreferences(cordovaContext),
-    platformsList = cordovaContext.opts.platforms;
+  var pluginPreferences = configParser.readPreferences(cordovaContext);
+  var platformsList = cordovaContext.opts.platforms;
 
   // if no preferences are found - exit
   if (pluginPreferences == null) {

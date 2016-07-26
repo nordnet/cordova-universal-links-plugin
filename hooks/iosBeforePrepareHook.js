@@ -4,9 +4,9 @@ It will check if project name has changed. If so - it will change the name of th
 If file name has no changed - hook would not do anything.
 */
 
-var path = require('path'),
-  fs = require('fs'),
-  ConfigXmlHelper = require('./lib/configXmlHelper.js');
+var path = require('path');
+var fs = require('fs');
+var ConfigXmlHelper = require('./lib/configXmlHelper.js');
 
 module.exports = function(ctx) {
   run(ctx);
@@ -18,11 +18,12 @@ module.exports = function(ctx) {
  * @param {Object} ctx - cordova context object
  */
 function run(ctx) {
-  var projectRoot = ctx.opts.projectRoot,
-    iosProjectFilePath = path.join(projectRoot, 'platforms', 'ios'),
-    configXmlHelper = new ConfigXmlHelper(ctx),
-    oldProjectName = getOldProjectName(iosProjectFilePath),
-    newProjectName = configXmlHelper.getProjectName();
+  var projectRoot = ctx.opts.projectRoot;
+  var iosProjectFilePath = path.join(projectRoot, 'platforms', 'ios');
+  var configXmlHelper = new ConfigXmlHelper(ctx);
+  var newProjectName = configXmlHelper.getProjectName();
+
+  var oldProjectName = getOldProjectName(iosProjectFilePath);
 
   // if name has not changed - do nothing
   if (oldProjectName.length > 0 && oldProjectName === newProjectName) {
@@ -32,8 +33,8 @@ function run(ctx) {
   console.log('Project name has changed. Renaming .entitlements file.');
 
   // if it does - rename it
-  var oldEntitlementsFilePath = path.join(iosProjectFilePath, oldProjectName, 'Resources', oldProjectName + '.entitlements'),
-    newEntitlementsFilePath = path.join(iosProjectFilePath, oldProjectName, 'Resources', newProjectName + '.entitlements');
+  var oldEntitlementsFilePath = path.join(iosProjectFilePath, oldProjectName, 'Resources', oldProjectName + '.entitlements');
+  var newEntitlementsFilePath = path.join(iosProjectFilePath, oldProjectName, 'Resources', newProjectName + '.entitlements');
 
   try {
     fs.renameSync(oldEntitlementsFilePath, newEntitlementsFilePath);
@@ -53,8 +54,7 @@ function run(ctx) {
  * @return {String} old project name
  */
 function getOldProjectName(projectDir) {
-  var files = [],
-    projectName = '';
+  var files = [];
 
   try {
     files = fs.readdirSync(projectDir);
@@ -62,17 +62,14 @@ function getOldProjectName(projectDir) {
     return '';
   }
 
-  // find file with .xcodeproj extension, use it as an old project name
-  files.some(function(fileName) {
-    if (path.extname(fileName) === '.xcodeproj') {
-      projectName = path.basename(fileName, '.xcodeproj');
-      return true;
-    }
-
-    return false;
+  var projectFile = files.find(function(fileName) {
+    return path.extname(fileName) === '.xcodeproj';
   });
+  if (!projectFile) {
+    return '';
+  }
 
-  return projectName;
+  return path.basename(projectFile, '.xcodeproj');
 }
 
 // endregion
