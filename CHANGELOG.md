@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.2.0 (2016-07-27)
+
+**Enhancements:**
+
+- [Merged pull request #56](https://github.com/nordnet/cordova-universal-links-plugin/pull/56). Adds support for wildcard domains. Thanks to [@schmidt](https://github.com/schmidt) for implementation.
+
+**Docs:**
+
+- [Merged pull request #67](https://github.com/nordnet/cordova-universal-links-plugin/pull/67). Added `Prevent Android from creating mutiple app instances` section. Thanks to [@yernandus](https://github.com/yernandus).
+- [Merged pull request #70](https://github.com/nordnet/cordova-universal-links-plugin/pull/70). Added `Digital Asset Links support` section. Thanks to [@ghybs](https://github.com/ghybs).
+
 ## 1.1.2 (2016-04-27)
 
 **Bug fixes:**
@@ -27,7 +38,7 @@
 - [Issue #26](https://github.com/nordnet/cordova-universal-links-plugin/issues/26). Fixed support for multiple wildcards in path. Thanks to [@tdelmas](https://github.com/tdelmas) for helping with solution.
 - Other minor bug fixes.
 
-**Enchancements:**
+**Enhancements:**
 
 - [Issue #18](https://github.com/nordnet/cordova-universal-links-plugin/issues/18). Added JS module through which you can subscribe for launch events. Solves timing issue with the previous `document.addEventListener()` approach.
 - [Issue #20](https://github.com/nordnet/cordova-universal-links-plugin/issues/20). Lowered min iOS version to 8.0. Plugin want work on devices prior to iOS 9, but if your application includes this plugin - it now will run on iOS 8 devices. Before you had to drop iOS 8 support.
@@ -48,7 +59,7 @@
 
 - Android. Fixed [issue #9](https://github.com/nordnet/cordova-universal-links-plugin/issues/9). Now when application is resumed from the link click - appropriate event is dispatched to the JavaScript side.
 
-**Enchancements:**
+**Enhancements:**
 
 - iOS. [Issue #6](https://github.com/nordnet/cordova-universal-links-plugin/issues/6). Scheme is now removed from the url matching process, since it is not needed: only hostname and path are used.
 - Merged [pull request #1](https://github.com/nordnet/cordova-universal-links-plugin/pull/1). Now dependency npm packages are taken from the package.json file. Thanks to [@dpa99c](https://github.com/dpa99c).
