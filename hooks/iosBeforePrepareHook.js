@@ -1,7 +1,7 @@
 /*
 Hook executed before the 'prepare' stage. Only for iOS project.
 It will check if project name has changed. If so - it will change the name of the .entitlements file to remove that file duplicates.
-If file name has no changed - hook would not do anything.
+If file name has no changed - hook will do nothing.
 */
 
 var path = require('path');
@@ -26,7 +26,7 @@ function run(ctx) {
   var oldProjectName = getOldProjectName(iosProjectFilePath);
 
   // if name has not changed - do nothing
-  if (oldProjectName.length > 0 && oldProjectName === newProjectName) {
+  if (oldProjectName.length && oldProjectName === newProjectName) {
     return;
   }
 
@@ -55,21 +55,20 @@ function run(ctx) {
  */
 function getOldProjectName(projectDir) {
   var files = [];
-
   try {
     files = fs.readdirSync(projectDir);
   } catch (err) {
     return '';
   }
 
-  var projectFile = files.find(function(fileName) {
-    return path.extname(fileName) === '.xcodeproj';
+  var projectFile = '';
+  files.forEach(function(fileName) {
+    if (path.extname(fileName) === '.xcodeproj') {
+      projectFile = path.basename(fileName, '.xcodeproj');
+    }
   });
-  if (!projectFile) {
-    return '';
-  }
 
-  return path.basename(projectFile, '.xcodeproj');
+  return projectFile;
 }
 
 // endregion
