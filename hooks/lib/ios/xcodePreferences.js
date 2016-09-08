@@ -91,15 +91,15 @@ function activateAssociativeDomains(xcodeProject) {
  */
 function addPbxReference(xcodeProject) {
   var fileReferenceSection = nonComments(xcodeProject.pbxFileReferenceSection());
-  var entitlementsRelativeFilePath = pathToEntitlementsFile();
+  var entitlementsFileName = path.basename(pathToEntitlementsFile());
 
-  if (isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFilePath)) {
+  if (isPbxReferenceAlreadySet(fileReferenceSection, entitlementsFileName)) {
     console.log('Entitlements file is in reference section.');
     return;
   }
 
   console.log('Entitlements file is not in references section, adding it');
-  createPbxFileReference(xcodeProject, entitlementsRelativeFilePath);
+  xcodeProject.addResourceFile(entitlementsFileName);
 }
 
 /**
@@ -123,16 +123,6 @@ function isPbxReferenceAlreadySet(fileReferenceSection, entitlementsRelativeFile
   }
 
   return isAlreadyInReferencesSection;
-}
-
-/**
- * Create reference to the entitlements file in the xcode project.
- *
- * @param {Object} xcodeProject - xcode project preferences; all changes are made in that instance
- * @param {String} entitlementsRelativeFilePath - relative path to entitlemets file
- */
-function createPbxFileReference(xcodeProject, entitlementsRelativeFilePath) {
-  xcodeProject.addResourceFile(path.basename(entitlementsRelativeFilePath));
 }
 
 // region Xcode project file helpers
