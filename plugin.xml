@@ -55,21 +55,21 @@
 
 <!-- sources for Model folder -->
     <source-file src="src/ios/Model/CULHost.m" target-dir="Model/"/>
-    <source-file src="src/ios/Model/CULHost.h" target-dir="Model/"/>
+    <header-file src="src/ios/Model/CULHost.h" target-dir="Model/"/>
 
     <source-file src="src/ios/Model/CULPath.m" target-dir="Model/"/>
-    <source-file src="src/ios/Model/CULPath.h" target-dir="Model/"/>
+    <header-file src="src/ios/Model/CULPath.h" target-dir="Model/"/>
 
 <!-- sources for Parser folder -->
     <source-file src="src/ios/Parser/CULXmlTags.m" target-dir="Parser/"/>
-    <source-file src="src/ios/Parser/CULXmlTags.h" target-dir="Parser/"/>
+    <header-file src="src/ios/Parser/CULXmlTags.h" target-dir="Parser/"/>
 
     <source-file src="src/ios/Parser/CULConfigXmlParser.m" target-dir="Parser/"/>
-    <source-file src="src/ios/Parser/CULConfigXmlParser.h" target-dir="Parser/"/>
+    <header-file src="src/ios/Parser/CULConfigXmlParser.h" target-dir="Parser/"/>
 
 <!-- sources for Utils folder -->
     <source-file src="src/ios/Utils/NSBundle+CULPlugin.m" target-dir="Utils/"/>
-    <source-file src="src/ios/Utils/NSBundle+CULPlugin.h" target-dir="Utils/"/>
+    <header-file src="src/ios/Utils/NSBundle+CULPlugin.h" target-dir="Utils/"/>
 
   </platform>
 
