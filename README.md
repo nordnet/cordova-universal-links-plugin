@@ -46,7 +46,7 @@ It is important not only to redirect users to your app from the web, but also pr
 - [Additional documentation links](#additional-documentation-links)
 
 ### Installation
-This requires cordova 5.0+ (current stable 1.2.0)
+This requires cordova 5.0+ (current stable 1.2.1)
 
 ```sh
 cordova plugin add cordova-universal-links-plugin
