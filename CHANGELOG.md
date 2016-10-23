@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.2.1 (2016-10-23)
+
+**Bug fixes:**
+
+- [Issue #79](https://github.com/nordnet/cordova-universal-links-plugin/issues/79). Fixed installation error: header files were added to the compile section of the project.
+- [Issue #77](https://github.com/nordnet/cordova-universal-links-plugin/issues/77). Fixed `before_prepare` hook for iOS that crashed on several systems. Thanks to [@lunchbag](https://github.com/lunchbag) for providing a fix.
+
+**Enhancements:**
+
+- [Issue #93](https://github.com/nordnet/cordova-universal-links-plugin/issues/93). Fixed iOS build warnings.
+
 ## 1.2.0 (2016-07-27)
 
 **Enhancements:**
@@ -8,7 +19,7 @@
 
 **Docs:**
 
-- [Merged pull request #67](https://github.com/nordnet/cordova-universal-links-plugin/pull/67). Added `Prevent Android from creating mutiple app instances` section. Thanks to [@yernandus](https://github.com/yernandus).
+- [Merged pull request #67](https://github.com/nordnet/cordova-universal-links-plugin/pull/67). Added `Prevent Android from creating multiple app instances` section. Thanks to [@yernandus](https://github.com/yernandus).
 - [Merged pull request #70](https://github.com/nordnet/cordova-universal-links-plugin/pull/70). Added `Digital Asset Links support` section. Thanks to [@ghybs](https://github.com/ghybs).
 
 ## 1.1.2 (2016-04-27)
