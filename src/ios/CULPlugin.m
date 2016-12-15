@@ -37,6 +37,18 @@
 //    [self handleUserActivity:activity];
 //}
 
+- (void)handleOpenURL:(NSNotification*)notification
+{
+    NSURL* url = [notification object];
+
+    if ([url isKindOfClass:[NSURL class]]) {
+        CULHost *host = [self findHostByURL:url];
+        if (host != nil) {
+            [self storeEventWithHost:host originalURL:url];
+        }
+    }
+}
+
 - (BOOL)handleUserActivity:(NSUserActivity *)userActivity {
     [self localInit];
     
