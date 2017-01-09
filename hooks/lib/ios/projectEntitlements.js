@@ -114,7 +114,8 @@ function generateAssociatedDomainsContent(pluginPreferences) {
   // generate list of host links
   pluginPreferences.hosts.forEach(function(host) {
     link = domainsListEntryForHost(host);
-    domainsList.push(link);
+    if(domainsList.indexOf(link) == -1)
+		  domainsList.push(link);
   });
 
   return domainsList;
