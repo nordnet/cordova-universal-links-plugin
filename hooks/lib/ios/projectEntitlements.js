@@ -109,13 +109,13 @@ function injectPreferences(currentEntitlements, pluginPreferences) {
  */
 function generateAssociatedDomainsContent(pluginPreferences) {
   var domainsList = [];
-  var link;
 
   // generate list of host links
   pluginPreferences.hosts.forEach(function(host) {
-    link = domainsListEntryForHost(host);
-    if(domainsList.indexOf(link) == -1)
-		  domainsList.push(link);
+    var link = domainsListEntryForHost(host);
+    if (domainsList.indexOf(link) == -1) {
+      domainsList.push(link);
+    }
   });
 
   return domainsList;
