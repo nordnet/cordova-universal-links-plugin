@@ -60,12 +60,16 @@
     <source-file src="src/ios/Model/CULPath.m" target-dir="Model/"/>
     <header-file src="src/ios/Model/CULPath.h" target-dir="Model/"/>
 
-<!-- sources for Parser folder -->
-    <source-file src="src/ios/Parser/CULXmlTags.m" target-dir="Parser/"/>
-    <header-file src="src/ios/Parser/CULXmlTags.h" target-dir="Parser/"/>
+<!-- sources for XML Parser folder -->
+    <source-file src="src/ios/Parser/XML/CULXmlTags.m" target-dir="Parser/XML/"/>
+    <header-file src="src/ios/Parser/XML/CULXmlTags.h" target-dir="Parser/XML/"/>
 
-    <source-file src="src/ios/Parser/CULConfigXmlParser.m" target-dir="Parser/"/>
-    <header-file src="src/ios/Parser/CULConfigXmlParser.h" target-dir="Parser/"/>
+    <source-file src="src/ios/Parser/XML/CULConfigXmlParser.m" target-dir="Parser/XML/"/>
+    <header-file src="src/ios/Parser/XML/CULConfigXmlParser.h" target-dir="Parser/XML/"/>
+
+<!-- sources for JSON Parser folder -->
+    <source-file src="src/ios/Parser/JSON/CULConfigJsonParser.m" target-dir="Parser/JSON/"/>
+    <header-file src="src/ios/Parser/JSON/CULConfigJsonParser.h" target-dir="Parser/JSON/"/>
 
 <!-- sources for Utils folder -->
     <source-file src="src/ios/Utils/NSBundle+CULPlugin.m" target-dir="Utils/"/>

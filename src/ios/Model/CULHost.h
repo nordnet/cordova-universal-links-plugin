@@ -53,4 +53,11 @@
  */
 - (void)addPath:(CULPath *)path;
 
+/**
+ *  Add list of paths.
+ * 
+ *  @param paths paths to add
+ */
+- (void)addAllPaths:(NSArray<CULPath *> *)paths;
+
 @end
