@@ -815,13 +815,15 @@ Step-by-step guide:
 
   ![App ID](docs/images/branch-io.jpg?raw=true)
 
-4. It will take some time to update their servers, so be patient. To check if it is ready - just open [https://bnc.lt/apple-app-site-association](https://bnc.lt/apple-app-site-association) and search for your `Bundle identifier`.
+  and check the bottom of `Link Settings` page, there is the your `Link Domain`.
 
-  Pay attention for `paths` - if there is any for your app, then write it down.
+  ![Link Domain](docs/images/branch-io-link-domain.jpg?raw=true)
+
+4. It will take some time to update their servers, so be patient. To check if it is ready - just open a url like [https://a2Be.app.link/apple-app-site-association](https://a2Be.app.link/apple-app-site-association). You can show like below.
 
   For example:
   ```json
-  ...,"9F38WJR2U8.com.example.ul":{"paths":["/a2Be/*"]},...
+  {"applinks":{"apps":[],"details":[{"appID":"9F38WJR2U8.com.example.ul","paths":["NOT /e/*","*","/"]}]}}
   ```
 
 5. Create new Cordova iOS application and add UL plugin:
@@ -833,16 +835,16 @@ Step-by-step guide:
   cordova plugin add cordova-universal-links-plugin
   ```
 
-6. Add `bnc.lt` and your other hosts into `config.xml`:
+6. Add `your-subdomain.app.link` and your other hosts into `config.xml`:
 
   ```xml
   <universal-links>
-    <host name="bnc.lt" />
+    <host name="your-subdomain.app.link" />
     <host name="yourdomain.com" />
   </universal-links>
   ```
 
-  For test purpose you can leave only `bnc.lt` in there. But if you specifying your hosts - you need to [white label](https://dev.branch.io/recipes/branch_universal_links/#white-label-domains) them.
+  For test purpose you can leave only `your-subdomain.app.link` in there. But if you specifying your hosts - you need to [white label](https://dev.branch.io/recipes/branch_universal_links/#white-label-domains) them.
 
 7. Attach your real device to the computer and run application on it:
 
@@ -854,7 +856,7 @@ Step-by-step guide:
 
 8. Email yourself a link that need's to be tested.
 
-  For example, `https://bnc.lt/a2Be/somepage.html`. As you can see, link constructed from hostname and path component, specified in `apple-app-site-association` file. This link may not even lead to the real page, it doesn't matter. It's only purpose is to open the app.
+  For example, `https://a2Be.app.link/somepage.html`. As you can see, link constructed from hostname and path component, specified in `apple-app-site-association` file. This link may not even lead to the real page, it doesn't matter. It's only purpose is to open the app.
 
   Now click on your link. Application should be launched. If not - check all the steps above. Also, check your provisioning profiles in Xcode.
 
