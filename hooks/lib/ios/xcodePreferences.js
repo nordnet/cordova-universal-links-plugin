@@ -166,15 +166,15 @@ function loadProjectFile() {
           var frameworks_file = path.join(iosPlatformPath(), 'frameworks.json');
           var frameworks = {};
           try {
-              frameworks = context.requireCordovaModule(frameworks_file);
+            frameworks = context.requireCordovaModule(frameworks_file);
           } catch (e) { }
         
           fs.writeFileSync(pbxPath, xcodeproj.writeSync());
-            if (Object.keys(frameworks).length === 0){
-              // If there is no framework references remain in the project, just remove this file
-              context.requireCordovaModule('shelljs').rm('-rf', frameworks_file);
-              return;
-            }
+          if (Object.keys(frameworks).length === 0){
+            // If there is no framework references remain in the project, just remove this file
+            context.requireCordovaModule('shelljs').rm('-rf', frameworks_file);
+            return;
+          }
           fs.writeFileSync(frameworks_file, JSON.stringify(this.frameworks, null, 4));
         }
       };
