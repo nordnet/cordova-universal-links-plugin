@@ -23,12 +23,14 @@
     <clobbers target="universalLinks"/>
   </js-module>
 
-<!-- Hooks -->
-  <hook src="hooks/afterPrepareHook.js" type="after_prepare"/>
-  <hook src="hooks/beforePluginInstallHook.js" type="before_plugin_install" />
+  <!-- Hooks -->
+  <hook src="hooks/hooks/beforePluginInstall.js" type="before_plugin_install" />
+  <hook src="hooks/hooks/beforePrepare.js" type="after_plugin_install" />
+  <hook src="hooks/hooks/afterPrepare.js" type="after_plugin_add" />
+  <hook src="hooks/hooks/beforePrepare.js" type="before_prepare" />
+  <hook src="hooks/hooks/afterPrepare.js" type="after_prepare" />
 
   <platform name="ios">
-    <hook src="hooks/iosBeforePrepareHook.js" type="before_prepare" />
 
 <!-- Plugin inclusion in Cordova config.xml  -->
     <config-file parent="/*" target="config.xml">

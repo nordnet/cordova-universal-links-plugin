@@ -235,7 +235,7 @@ is the same as:
 </universal-links>
 ```
 
-#### ios-team-id
+#### ios-team-release
 
 As described in `Step 2` of [Configure apple-app-site-association file for website](#configure-apple-app-site-association-file-for-website) section: when application is build from the CLI - plugin generates `apple-app-site-association` files for each host, defined in `config.xml`. In them there's an `appID` property that holds your iOS Team ID and Bundle ID:
 
@@ -261,11 +261,11 @@ As described in `Step 2` of [Configure apple-app-site-association file for websi
   <widget id="com.example.ul" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   ```
 
-- `<TEAM_ID_FROM_MEMBER_CENTER>` - that property is defined in the member center of your iOS account. So, you can either put it in the generated `apple-app-site-association` file manually, or use `<ios-team-id>` preference in `config.xml` like so:
+- `<TEAM_ID_FROM_MEMBER_CENTER>` - that property is defined in the member center of your iOS account. So, you can either put it in the generated `apple-app-site-association` file manually, or use `<ios-team-release>` preference in `config.xml` like so:
 
   ```xml
   <universal-links>
-      <ios-team-id value="<TEAM_ID_FROM_MEMBER_CENTER>" />
+      <ios-team-release value="<TEAM_ID_FROM_MEMBER_CENTER>" />
   </universal-links>
   ```
 
@@ -276,7 +276,7 @@ For example, following `config.xml`
 <!-- some other cordova preferences -->
 
 <universal-links>
-    <ios-team-id value="1Q2WER3TY" />
+    <ios-team-release value="1Q2WER3TY" />
     <host name="mysite.com" >
       <path url="/some/path/*" />
     </host>
@@ -302,6 +302,8 @@ will result into
 ```
 
 This is iOS-only preference, Android doesn't need it.
+
+**Note:** If you want a different debug team, you can configure it using the `<ios-team-debug>` tag. Also projects that already have a `debug.json` present will be used in advance of this configuration.
 
 #### Prevent Android from creating multiple app instances
 

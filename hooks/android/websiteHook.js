@@ -10,7 +10,6 @@ https://developer.android.com/training/app-indexing/enabling-app-indexing.html
 var fs = require('fs');
 var path = require('path');
 var mkpath = require('mkpath');
-var ConfigXmlHelper = require('../configXmlHelper.js');
 var WEB_HOOK_FILE_PATH = path.join('ul_web_hooks', 'android', 'android_web_hook.html');
 var WEB_HOOK_TPL_FILE_PATH = path.join('plugins', 'cordova-universal-links-plugin', 'ul_web_hooks', 'android_web_hook_tpl.html');
 var LINK_PLACEHOLDER = '[__LINKS__]';
@@ -30,8 +29,7 @@ module.exports = {
  */
 function generateWebHook(cordovaContext, pluginPreferences) {
   var projectRoot = cordovaContext.opts.projectRoot;
-  var configXmlHelper = new ConfigXmlHelper(cordovaContext);
-  var packageName = configXmlHelper.getPackageName('android');
+  var packageName = pluginPreferences.androidBundleId;
   var template = readTemplate(projectRoot);
 
   // if template was not found - exit
