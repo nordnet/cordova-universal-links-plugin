@@ -21,7 +21,6 @@ var path = require('path');
 var mkpath = require('mkpath');
 var fs = require('fs');
 var rimraf = require('rimraf');
-var ConfigXmlHelper = require('../configXmlHelper.js');
 var IOS_TEAM_ID = '<YOUR_TEAM_ID_FROM_MEMBER_CENTER>';
 var ASSOCIATION_FILE_NAME = 'apple-app-site-association';
 var bundleId;
@@ -62,13 +61,13 @@ function removeOldFiles() {
  * @param {Object} pluginPreferences - list of hosts from config.xml
  */
 function createNewAssociationFiles(pluginPreferences) {
-  var teamId = pluginPreferences.iosTeamId;
+  var teamId = pluginPreferences.iosTeamRelease;
   if (!teamId) {
     teamId = IOS_TEAM_ID;
   }
 
   pluginPreferences.hosts.forEach(function(host) {
-    var content = generateFileContentForHost(host, teamId);
+    var content = generateFileContentForHost(host, teamId, pluginPreferences.iosBundleId);
     saveContentToFile(host.name, content);
   });
 }
@@ -79,8 +78,8 @@ function createNewAssociationFiles(pluginPreferences) {
  * @param {Object} host - host information
  * @return {Object} content of the file as JSON object
  */
-function generateFileContentForHost(host, teamId) {
-  var appID = teamId + '.' + getBundleId();
+function generateFileContentForHost(host, teamId, iosBundleId) {
+  var appID = teamId + '.' + iosBundleId;
   var paths = host.paths.slice();
 
   // if paths are '*' - we should add '/' to it to support root domains.
@@ -154,20 +153,6 @@ function getWebHookDirectory() {
  */
 function getProjectRoot() {
   return context.opts.projectRoot;
-}
-
-/**
- * Get bundle id from the config.xml file.
- *
- * @return {String} bundle id
- */
-function getBundleId() {
-  if (bundleId === undefined) {
-    var configXmlHelper = new ConfigXmlHelper(context);
-    bundleId = configXmlHelper.getPackageName('ios');
-  }
-
-  return bundleId;
 }
 
 // endregion
