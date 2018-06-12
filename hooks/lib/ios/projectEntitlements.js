@@ -9,13 +9,10 @@ Script only generates content. File it self is included in the xcode project in 
 var path = require('path');
 var fs = require('fs');
 var plist = require('plist');
-var mkpath = require('mkpath');
 var ConfigXmlHelper = require('../configXmlHelper.js');
 var ASSOCIATED_DOMAINS = 'com.apple.developer.associated-domains';
 var context;
-var projectRoot;
 var projectName;
-var entitlementsFilePath;
 
 module.exports = {
   generateAssociatedDomainsEntitlements: generateEntitlements
@@ -33,6 +30,7 @@ function generateEntitlements(cordovaContext, pluginPreferences) {
   context = cordovaContext;
 
   var currentEntitlements = getEntitlementsFileContent();
+  console.log(currentEntitlements);
   var newEntitlements = injectPreferences(currentEntitlements, pluginPreferences);
 
   saveContentToEntitlementsFile(newEntitlements);
@@ -51,11 +49,11 @@ function saveContentToEntitlementsFile(content) {
   var plistContent = plist.build(content);
   var filePath = pathToEntitlementsFile();
 
-  // ensure that file exists
-  mkpath.sync(path.dirname(filePath));
-
-  // save it's content
-  fs.writeFileSync(filePath, plistContent, 'utf8');
+  ['Debug', 'Release'].forEach(config => {
+    var entitlementsPath = path.join(filePath, 'Entitlements-' + config + '.plist');
+    // save it's content
+    fs.writeFileSync(entitlementsPath, plistContent, 'utf8');
+  });
 }
 
 /**
@@ -64,7 +62,7 @@ function saveContentToEntitlementsFile(content) {
  * @return {String} entitlements file content
  */
 function getEntitlementsFileContent() {
-  var pathToFile = pathToEntitlementsFile();
+  var pathToFile = path.join(pathToEntitlementsFile(), 'Entitlements-Debug.plist');
   var content;
 
   try {
@@ -141,11 +139,7 @@ function domainsListEntryForHost(host) {
  * @return {String} absolute path to entitlements file
  */
 function pathToEntitlementsFile() {
-  if (entitlementsFilePath === undefined) {
-    entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Resources', getProjectName() + '.entitlements');
-  }
-
-  return entitlementsFilePath;
+  return path.join(getProjectRoot(), 'platforms/ios/', getProjectName());
 }
 
 /**
